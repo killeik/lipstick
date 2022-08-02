@@ -12,7 +12,7 @@ Console Colour Scheme Synchroniser (C2S2) is a configurable mechanism for synchr
 
 ## Install
 
-😇 [Download and run this installation script.](https://codeberg.org/small-tech/c2s2/raw/branch/main/install) 
+😇 [Download](https://codeberg.org/small-tech/c2s2/raw/branch/main/install) and run [this installation script.](https://codeberg.org/small-tech/c2s2/raw/branch/main/install) 
 
 😈 Or, if you enjoy living dangerously, pipe it from here to your shell (ooh, naughty!)
 
