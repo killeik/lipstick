@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+
+######################################################################
+#
+# Console Colour Scheme Synchroniser (C2S2) Installation Script.
+#
+# 1. Adds c2s2-monitor and c2s2-update scripts to ~/.local/bin
+# 2. Adds light and dark configuration scripts to ~/.config/c2s2
+# 3. Adds a systemd unit file to ~/.config/systemd/user
+# 4. Enables the systemd service to start the cs2s-monitor script.
+#
+# For more information, usage instructions, and app configurations,
+# please see: https://codeberg.org/small-tech/c2s2
+#
+# Copyright © 2022-present Aral Balkan, Small Technology Foundation
+# Released under AGPL version 3.0.
+#
+######################################################################
+
+# Monitor script.
+
+read -rd '' monitor <<-EOF
+#!/usr/bin/env bash
+
+gsettings monitor org.gnome.desktop.interface color-scheme \
+  | xargs -L1 bash -c "source ${HOME}/.local/bin/c2s2-update"
+EOF
+
+echo "$monitor"
+
+# Update script.
+
+read -rd '' update <<-EOF
+if [[ "$1" == "default" ]]; then
+  # Activate light theme configuration.
+  ${HOME}/.config/c2s2/light
+else
+  # Activate dark theme configuration.
+  ${HOME}/.config/c2s2/dark
+fi
+EOF
+
+echo "$update"
+
+# Enable script.
+
+read -rd '' enable <<-EOF
+#!/usr/bin/env bash
+
+# Enable the C2S2 colour scheme change monitor to start on boot,
+# start it up immediately, and also run the update command right away.
+${HOME}/.local/bin/c2s2-update
+systemctl --user enable helix-system-colour-scheme-synchronisation.service
+systemctl --user start helix-system-colour-scheme-synchronisation.service
+EOF
+
+echo "$enable"
+
+# Disable script.
+
+read -rd '' disable <<-EOF
+#!/usr/bin/env bash
+
+# Stop the C2S2 colour scheme change monitor service immediately and
+# disable it from starting at boot.
+systemctl --user stop helix-system-colour-scheme-synchronisation.service
+systemctl --user disable helix-system-colour-scheme-synchronisation.service
+EOF
+
+echo "$disable"
+
+# Systemd unit.
+
+read -rd '' unit <<-EOF
+[Unit]
+Description=Console Colour Scheme Synchroniser (C2S2)
+Documentation=https://codeberg.org/small-tech/c2s2
+After=gnome-session.target
+
+[Service]
+Type=simple
+RestartSec=5
+Restart=always
+ExecStart=%h/.local/bin/c2s2-monitor
+
+[Install]
+WantedBy=gnome-session.target
+EOF
+
+echo "$unit"
