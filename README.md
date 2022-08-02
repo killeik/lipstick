@@ -1,5 +1,11 @@
 # Console Colour Scheme Synchroniser (C2S2)
 
+
+
+## 🚧 Work in progress, please do not use yet.
+
+
+
 Console Colour Scheme Synchroniser (C2S2) is a configurable mechanism for synchronising the themes of command-line applications with GNOME system colour scheme changes.
 
 [Why?](#why)
