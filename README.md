@@ -12,20 +12,20 @@ Console Colour Scheme Synchroniser (C2S2) is a configurable mechanism for synchr
 
 ## Install
 
-😇 [Download and run this installation script.](https://c2s2.small-web.org/install) 
+😇 [Download and run this installation script.](https://codeberg.org/small-tech/c2s2/raw/branch/main/install) 
 
 😈 Or, if you enjoy living dangerously, pipe it from here to your shell (ooh, naughty!)
 
 __Using wget:__
 
 ```shell
-wget -qO- https://c2s2.small-web.org/install | bash
+wget -qO- https://codeberg.org/small-tech/c2s2/raw/branch/main/install | bash
 ```
 
 __Using curl:__
 
 ```shell
-curl -s https://c2s2.small-web.org/install | bash
+curl -s https://codeberg.org/small-tech/c2s2/raw/branch/main/install | bash
 ```
 
 ## Use
