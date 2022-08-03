@@ -36,64 +36,16 @@ curl -s https://codeberg.org/small-tech/c2s2/raw/branch/main/install | bash
 
 ## Use
 
-The installer copies a couple of bash scripts (_c2s2-monitor_ and _c2s2-update) into your [~/.local/bin](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)_ folder and sets up a systemd service to run the monitoring script. When the monitoring script detects that the system colour scheme has changed, it calls the update script.
+The installer sets up and starts a systemd user service that runs the c2s2 monitoring script. When the monitoring script detects that the system colour scheme has changed the c2s2 update script runs either the light mode or dark mode script in your c2s2 configuration directory based on the state of the system colour scheme.
 
-The installer also creates two configuration files (bash scripts) in the _~/.config/c2s2_  folder:
+You can find these scripts at:
 
-- light
-- dark
+- _~/.config/c2s2/light_
+- _~/.config/c2s2/dark_
 
-By default, c2s2 will simply log colour scheme changes to the systemd journal (which you can view using the `journalctl c2s2` to make sure it’s working).
+You configure c2s2 by adding [app configurations](./configurations.md) to these two scripts.
 
-To configure c2s2, copy the configurations from here into them.
-
-## Configurations
-
-Add the **Light** snippets to *~/.config/c2s2/light* and the **Dark** snippets to *~/.config/c2s2/dark* from the configurations below for the command-line apps you use.
-
-*The snippets below include default theme recommendations. Please feel free to modify these to use any other theme supported by the app.*
-
-### Helix Editor
-
-[Helix Editor](https://helix-editor.com/) is a modal command-line editor inspired by [Kakoune](http://kakoune.org/) that has multiple cursors, a select-then-affect model, [tree-sitter](https://tree-sitter.github.io/tree-sitter/) integration, and [language server](https://microsoft.github.io/language-server-protocol/) support.
-
-**Light:**
-
-```bash
-# Helix Editor
-sed -i 's/theme = ".*"/theme = "onelight"/' ${HOME}/.config/helix/config.toml
-```
-
-**Dark:**
-
-```bash
-# Helix Editor
-sed -i 's/theme = ".*"/theme = "dracula"/' ${HOME}/.config/helix/config.toml
-```
-
-## Bat
-
-[Bat](https://github.com/sharkdp/bat#readme) is a *cat(1)* clone with syntax highlighting and Git integration.
-
-**Light:**
-
-```bash
-# Bat (also used by Delta, etc.)
-export BAT_THEME='Monokai Extended Light'
-```
-
-**Dark:**
-
-```bash
-# Bat (also used by Delta, etc.)
-export BAT_THEME='Dracula'
-```
-
-## Delta
-
-[Delta](https://github.com/dandavison/delta#readme) is a syntax-highlighting pager for git, diff, and grep output.
-
-👉 Uses [Bat’s settings](#bat).
+> 💡 The default light and dark mode scripts do not contain any app configurations and will simply log colour scheme changes to the systemd journal (which you can view using the `journalctl c2s2` to make sure it’s working).
 
 ## Why?
 
