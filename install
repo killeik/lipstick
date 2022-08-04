@@ -41,12 +41,12 @@ scripts+=("${monitorScript}")
 read -rd '' updateScript <<-EOF
 #!/usr/bin/env bash
 
-if [[ "$1" == "default" ]]; then
+if [[ "\${1}" == "default" ]]; then
   # Activate light theme configuration.
-  "${HOME}/.config/c2s2/light"
+  source "\${HOME}/.config/c2s2/light"
 else
   # Activate dark theme configuration.
-  "${HOME}/.config/c2s2/dark"
+  source "\${HOME}/.config/c2s2/dark"
 fi
 EOF
 scripts+=("${updateScript}")
@@ -86,13 +86,13 @@ read -rd '' uninstallScript <<-EOF
 # Disables, stops, and uninstalls c2s2.
 
 "${HOME}/.local/bin/c2s2-disable"
-rm -rf "${HOME}/.config/c2s2"
-rm "${HOME}/.config.systemd/user/c2s2.service"
-rm "${HOME}/.local/bin/c2s2-monitor"
-rm "${HOME}/.local/bin/c2s2-update"
-rm "${HOME}/.local/bin/c2s2-enable"
-rm "${HOME}/.local/bin/c2s2-disable"
-rm "${HOME}/.local/bin/c2s2-uninstall"
+rm -rf "\${HOME}/.config/c2s2"
+rm "\${HOME}/.config.systemd/user/c2s2.service"
+rm "\${HOME}/.local/bin/c2s2-monitor"
+rm "\${HOME}/.local/bin/c2s2-update"
+rm "\${HOME}/.local/bin/c2s2-enable"
+rm "\${HOME}/.local/bin/c2s2-disable"
+rm "\${HOME}/.local/bin/c2s2-uninstall"
 EOF
 scripts+=("${uninstallScript}")
 
