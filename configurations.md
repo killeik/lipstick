@@ -9,7 +9,9 @@ For the apps you have on your system, copy and paste the corresponding snippets 
 
 *The snippets below include purely subjective default theme recommendations. Please feel free to modify these to use any other theme supported by the app. Also note that the snippets use default configuration paths. If the configuration file(s) for your apps are not in the default locations, update the snippets accordingly.*
 
-***You can contribute snippets for apps that are not already listed here by adding them to the end of this page, updating the index, and submitting a pull request. Please feel free to use the online editor here on Codeberg to do so.***
+## Contributing
+
+You can contribute snippets for apps that are not already listed here by adding them to the end of this page, updating the index, and submitting a pull request. Please feel free to use the online editor here on Codeberg to do so.
 
 ## Table of contents
 
