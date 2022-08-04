@@ -2,7 +2,7 @@
 
 ## 🚧 Work in progress, please do not use yet.
 
-Makes command-line apps adhere to your light/dark mode settings.
+Make command-line apps adhere to your light/dark mode settings.
 
 [Learn more.](https://ar.al/2022/08/03/the-most-important-lesson-in-design/)
 
