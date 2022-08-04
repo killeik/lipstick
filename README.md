@@ -1,10 +1,8 @@
-# Console Colour Scheme Synchroniser (C2S2)
+# Console Colour Scheme Sync (c2s2)
 
 ## 🚧 Work in progress, please do not use yet.
 
 Makes command-line apps adhere to your light/dark mode settings.
-
-Configurable and extensible.
 
 [Learn more.](https://ar.al/2022/08/03/the-most-important-lesson-in-design/)
 
