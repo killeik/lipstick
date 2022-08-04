@@ -86,12 +86,23 @@ EOF
 # Light mode configuration script.
 
 read -rd '' lightModeConfigurationScript <<-EOF
+# Light mode configuration script
+#
+# Add app configurations here from:
+# https://codeberg.org/small-tech/c2s2/src/branch/main/configurations.md
+
 echo '[c2s2] Switching to light mode.'
+
 EOF
 
 # Dark mode configuration script.
 
 read -rd '' darkModeConfigurationScript <<-EOF
+# Dark mode configuration script
+#
+# Add app configurations here from:
+# https://codeberg.org/small-tech/c2s2/src/branch/main/configurations.md
+
 echo '[c2s2] Switching to dark mode.'
 EOF
 
@@ -131,7 +142,7 @@ do
   chmod +x "${scriptPath}"
 done
 
-echo " -- Writing systemd unit"
+echo " -- Writing systemd unit file"
 
 echo "${systemdUnit}" > "${systemdUnitPath}"
 
@@ -144,15 +155,14 @@ echo "Done."
 echo ""
 echo "Usage instructions"
 echo ""
+echo "To disable the service, run c2s2-disable"
+echo "To re-enable the service, run c2s2-enable"
 echo ""
-echo "To disable the service, run c2s2-disable."
-echo "To re-enable it in the future, run c2s2-enable"
+echo "Configure light mode settings in ~/.config/c2s2/light"
+echo "Configure dark mode settings in ~/.config/c2s2/dark"
 echo ""
-echo "Configure light mode in ~/.config/c2s2/light"
-echo "Configure dark mode in ~/.config/c2s2/dark"
-echo ""
-echo "You can get app configurations from"
-echo "https://codeberg.org/small-tech/c2s2"
+echo "Get app configurations from:"
+echo "https://codeberg.org/small-tech/c2s2/src/configurations.md"
 echo ""
 echo "Enjoy!"
 echo ""
