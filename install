@@ -32,7 +32,7 @@ scripts=()
 read -rd '' monitorScript <<-EOF
 #!/usr/bin/env bash
 
-gsettings monitor org.gnome.desktop.interface color-scheme | xargs -L1 bash -c "source ${HOME}/.local/bin/c2s2-update"
+gsettings monitor org.gnome.desktop.interface color-scheme | xargs -L1 bash -c "source \${HOME}/.local/bin/c2s2-update"
 EOF
 scripts+=("${monitorScript}")
 
