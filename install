@@ -87,7 +87,7 @@ read -rd '' uninstallScript <<-EOF
 
 "${HOME}/.local/bin/c2s2-disable"
 rm -rf "\${HOME}/.config/c2s2"
-rm "\${HOME}/.config.systemd/user/c2s2.service"
+rm "\${HOME}/.config/systemd/user/c2s2.service"
 rm "\${HOME}/.local/bin/c2s2-monitor"
 rm "\${HOME}/.local/bin/c2s2-update"
 rm "\${HOME}/.local/bin/c2s2-enable"
