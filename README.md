@@ -2,9 +2,9 @@
 
 ## 🚧 Work in progress, please do not use yet.
 
-Console Colour Scheme Synchroniser (c2s2) makes command-line applications follow your light/dark mode settings on GNOME.
+Makes command-line apps adhere to your light/dark mode settings.
 
-It is configurable and extensible.
+Configurable and extensible.
 
 [Learn more.](https://ar.al/2022/08/03/the-most-important-lesson-in-design/)
 
