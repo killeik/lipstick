@@ -21,6 +21,10 @@
 echo "Installing Console Colour Scheme Synchroniser (c2s2)…"
 echo ""
 
+# Scripts.
+
+scripts=()
+
 # Monitor script.
 
 read -rd '' monitorScript <<-EOF
@@ -29,6 +33,7 @@ read -rd '' monitorScript <<-EOF
 gsettings monitor org.gnome.desktop.interface color-scheme \
   | xargs -L1 bash -c "source ${HOME}/.local/bin/c2s2-update"
 EOF
+scripts+=("${monitorScript}")
 
 # Update script.
 
@@ -41,6 +46,7 @@ else
   ${HOME}/.config/c2s2/dark
 fi
 EOF
+scripts+=("${updateScript}")
 
 # Enable script.
 
@@ -53,6 +59,7 @@ ${HOME}/.local/bin/c2s2-update
 systemctl --user enable c2s2.service
 systemctl --user start c2s2.service
 EOF
+scripts+=("${enableScript}")
 
 # Disable script.
 
@@ -64,6 +71,7 @@ read -rd '' disableScript <<-EOF
 systemctl --user stop c2s2.service
 systemctl --user disable c2s2.service
 EOF
+scripts+=("${disableScript}")
 
 # Systemd unit.
 
@@ -111,9 +119,6 @@ binaryDirectory="${HOME}/.local/bin"
 configurationDirectory="${HOME}/.config/c2s2"
 systemdUserDirectory="${HOME}/.config/systemd/user"
 
-# Scripts.
-scripts=(monitorScript updateScript enableScript disableScript lightModeConfigurationScript darkModeConfigurationScript)
-
 # Script paths.
 scriptPaths=()
 scriptPaths+=("${binaryDirectory}/c2s2-monitor") # monitor script
@@ -137,7 +142,7 @@ echo "  - Writing script files and ensuring they’re executable"
 numberOfScripts=${#scripts[@]}
 for (( i=0; i<numberOfScripts; i++ ));
 do
-  scriptPath=scriptPaths[$i]
+  scriptPath="${scriptPaths[$i]}"
   echo "${scripts[$i]}" > "${scriptPath}"
   chmod +x "${scriptPath}"
 done
