@@ -78,6 +78,24 @@ systemctl --user disable c2s2.service
 EOF
 scripts+=("${disableScript}")
 
+# Uninstall script.
+
+read -rd '' uninstallScript <<-EOF
+#!/usr/bin/env bash
+
+# Disables, stops, and uninstalls c2s2.
+
+"${HOME}/.local/bin/c2s2-disable"
+rm -rf "${HOME}/.config/c2s2"
+rm "${HOME}/.config.systemd/user/c2s2.service"
+rm "${HOME}/.local/bin/c2s2-monitor"
+rm "${HOME}/.local/bin/c2s2-update"
+rm "${HOME}/.local/bin/c2s2-enable"
+rm "${HOME}/.local/bin/c2s2-disable"
+rm "${HOME}/.local/bin/c2s2-uninstall"
+EOF
+scripts+=("${uninstallScript}")
+
 # Light mode configuration script.
 
 read -rd '' lightModeConfigurationScript <<-EOF
@@ -133,12 +151,13 @@ systemdUserDirectory="${HOME}/.config/systemd/user"
 # Script paths.
 
 scriptPaths=()
-scriptPaths+=("${binaryDirectory}/c2s2-monitor") # monitor script
-scriptPaths+=("${binaryDirectory}/c2s2-update")  # update script
-scriptPaths+=("${binaryDirectory}/c2s2-enable")  # enable script
-scriptPaths+=("${binaryDirectory}/c2s2-disable") # disable script
-scriptPaths+=("${configurationDirectory}/light") # light mode configuration script
-scriptPaths+=("${configurationDirectory}/dark")  # dark mode configuration script
+scriptPaths+=("${binaryDirectory}/c2s2-monitor")   # monitor script
+scriptPaths+=("${binaryDirectory}/c2s2-update")    # update script
+scriptPaths+=("${binaryDirectory}/c2s2-enable")    # enable script
+scriptPaths+=("${binaryDirectory}/c2s2-disable")   # disable script
+scriptPaths+=("${binaryDirectory}/c2s2-uninstall") # uninstall script
+scriptPaths+=("${configurationDirectory}/light")   # light mode configuration script
+scriptPaths+=("${configurationDirectory}/dark")    # dark mode configuration script
 
 systemdUnitPath="${systemdUserDirectory}/c2s2.service"
 
@@ -174,6 +193,7 @@ echo "Usage instructions"
 echo ""
 echo "To disable the service, run c2s2-disable"
 echo "To re-enable the service, run c2s2-enable"
+echo "To uninstall c2s2, run c2s2-uninstall"
 echo ""
 echo "Configure light mode settings in ~/.config/c2s2/light"
 echo "Configure dark mode settings in ~/.config/c2s2/dark"
