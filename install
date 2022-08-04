@@ -141,7 +141,7 @@ echo "  - Ensuring directories exist"
 # Ensure the directories we need exist.
 mkdir -p "${binaryDirectory}"
 mkdir -p "${configurationDirectory}"
-mkdir -p "${systemdDirectory}"
+mkdir -p "${systemdUserDirectory}"
 
 echo "  - Writing script files and ensuring they’re executable"
 
