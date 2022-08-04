@@ -39,6 +39,8 @@ scripts+=("${monitorScript}")
 # Update script.
 
 read -rd '' updateScript <<-EOF
+#!/usr/bin/env bash
+
 if [[ "$1" == "default" ]]; then
   # Activate light theme configuration.
   "${HOME}/.config/c2s2/light"
@@ -79,6 +81,8 @@ scripts+=("${disableScript}")
 # Light mode configuration script.
 
 read -rd '' lightModeConfigurationScript <<-EOF
+#!/usr/bin/env bash
+
 # Light mode configuration script
 #
 # Add app configurations here from:
@@ -91,6 +95,8 @@ scripts+=("${lightModeConfigurationScript}")
 # Dark mode configuration script.
 
 read -rd '' darkModeConfigurationScript <<-EOF
+#!/usr/bin/env bash
+
 # Dark mode configuration script
 #
 # Add app configurations here from:
