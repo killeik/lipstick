@@ -2,23 +2,25 @@
 
 ######################################################################
 #
-# Console Colour Scheme Synchroniser (c2s2) Installation Script.
+# Console Colour Scheme Sync (c2s2) Installation Script.
 #
 # 1. Adds c2s2-monitor, c2s2-update, c2s2-enable, and c2s2-disable
 #    scripts to ~/.local/bin
 # 2. Adds light and dark configuration scripts to ~/.config/c2s2
-# 3. Adds a systemd unit file to ~/.config/systemd/user
+# 3. Adds systemd unit file to ~/.config/systemd/user
 # 4. Enables the systemd service and starts it.
 #
 # For more information, usage instructions, and app configurations,
 # please see: https://codeberg.org/small-tech/c2s2
+#
+# Like this? Fund us! https://small-tech.org/fund-us
 #
 # Copyright © 2022-present Aral Balkan, Small Technology Foundation
 # Released under AGPL version 3.0.
 #
 ######################################################################
 
-echo "Installing Console Colour Scheme Synchroniser (c2s2)…"
+echo "Installing Console Colour Scheme Sync (c2s2)…"
 echo ""
 
 # Scripts.
@@ -40,10 +42,10 @@ scripts+=("${monitorScript}")
 read -rd '' updateScript <<-EOF
 if [[ "$1" == "default" ]]; then
   # Activate light theme configuration.
-  ${HOME}/.config/c2s2/light
+  "${HOME}/.config/c2s2/light"
 else
   # Activate dark theme configuration.
-  ${HOME}/.config/c2s2/dark
+  "${HOME}/.config/c2s2/dark"
 fi
 EOF
 scripts+=("${updateScript}")
@@ -55,7 +57,8 @@ read -rd '' enableScript <<-EOF
 
 # Enable the c2s2 colour scheme change monitor to start on boot,
 # start it up immediately, and also run the update command right away.
-${HOME}/.local/bin/c2s2-update
+
+"${HOME}/.local/bin/c2s2-update"
 systemctl --user enable c2s2.service
 systemctl --user start c2s2.service
 EOF
@@ -68,17 +71,42 @@ read -rd '' disableScript <<-EOF
 
 # Stop the c2s2 colour scheme change monitor service immediately and
 # disable it from starting at boot.
+
 systemctl --user stop c2s2.service
 systemctl --user disable c2s2.service
 EOF
 scripts+=("${disableScript}")
+
+# Light mode configuration script.
+
+read -rd '' lightModeConfigurationScript <<-EOF
+# Light mode configuration script
+#
+# Add app configurations here from:
+# https://codeberg.org/small-tech/c2s2/src/configurations.md
+
+echo '[c2s2] Switching to light mode.'
+EOF
+scripts+=("${lightModeConfigurationScript}")
+
+# Dark mode configuration script.
+
+read -rd '' darkModeConfigurationScript <<-EOF
+# Dark mode configuration script
+#
+# Add app configurations here from:
+# https://codeberg.org/small-tech/c2s2/src/configurations.md
+
+echo '[c2s2] Switching to dark mode.'
+EOF
+scripts+=("${darkModeConfigurationScript}")
 
 # Systemd unit.
 
 read -rd '' systemdUnit <<-EOF
 [Unit]
 Description=Console Colour Scheme Synchroniser (c2s2)
-Documentation=https://codeberg.org/small-tech/c2s2/#console-colour-scheme-synchroniser-c2s2
+Documentation=https://codeberg.org/small-tech/c2s2/src/README.md
 After=gnome-session.target
 
 [Service]
@@ -91,35 +119,14 @@ ExecStart=%h/.local/bin/c2s2-monitor
 WantedBy=gnome-session.target
 EOF
 
-# Light mode configuration script.
-
-read -rd '' lightModeConfigurationScript <<-EOF
-# Light mode configuration script
-#
-# Add app configurations here from:
-# https://codeberg.org/small-tech/c2s2/src/branch/main/configurations.md
-
-echo '[c2s2] Switching to light mode.'
-
-EOF
-
-# Dark mode configuration script.
-
-read -rd '' darkModeConfigurationScript <<-EOF
-# Dark mode configuration script
-#
-# Add app configurations here from:
-# https://codeberg.org/small-tech/c2s2/src/branch/main/configurations.md
-
-echo '[c2s2] Switching to dark mode.'
-EOF
-
 # Directory paths.
+
 binaryDirectory="${HOME}/.local/bin"
 configurationDirectory="${HOME}/.config/c2s2"
 systemdUserDirectory="${HOME}/.config/systemd/user"
 
 # Script paths.
+
 scriptPaths=()
 scriptPaths+=("${binaryDirectory}/c2s2-monitor") # monitor script
 scriptPaths+=("${binaryDirectory}/c2s2-update")  # update script
