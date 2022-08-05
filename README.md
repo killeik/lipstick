@@ -1,8 +1,8 @@
-# Console Colour Scheme Sync (c2s2)
+# 🐷 Lipstick on a Pig
 
 ## 🚧 Work in progress, please do not use yet.
 
-Make command-line apps adhere to your light/dark mode settings.
+Lipstick makes command-line apps follow your light/dark mode settings.
 
 [Learn more.](https://ar.al/2022/08/03/the-most-important-lesson-in-design/)
 
@@ -20,23 +20,23 @@ Make command-line apps adhere to your light/dark mode settings.
 
 ## Install
 
-😇 [Download and run this installation script.](https://codeberg.org/small-tech/c2s2/raw/branch/main/install) 
+😇 [Download and run this installation script.](https://codeberg.org/small-tech/lipstick/raw/branch/main/install) 
 
 😈 Or, if you enjoy living dangerously, pipe it from here to your shell (ooh, naughty!)
 
 __Using wget:__
 
 ```shell
-wget -qO- https://codeberg.org/small-tech/c2s2/raw/branch/main/install | bash
+wget -qO- https://codeberg.org/small-tech/lipstick/raw/branch/main/install | bash
 ```
 
 __Using curl:__
 
 ```shell
-curl -s https://codeberg.org/small-tech/c2s2/raw/branch/main/install | bash
+curl -s https://codeberg.org/small-tech/lipstick/raw/branch/main/install | bash
 ```
 
-c2s2 will automatically find supported apps on your system and configure itself. You shouldn’t have to do anything else.
+Lipstick will automatically find supported apps on your system and configure itself. You shouldn’t have to do anything else.
 
 ## Notes
 
