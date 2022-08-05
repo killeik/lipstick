@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+
+# Defines apps that c2s2 supports.
+#
+# App definition symbols use a naming convention based on the <appName>:
+#
+# apps+=(<appName>)  # Adds <appName> to list of supported apps
+# <appName>Command   # (string) the name of the app binary used to check if app exists
+# <appName>Init      # (function) carries out any one-time initialisation that might
+#                    #   be necessary (e.g., ensuring app configuration file exists).
+# <appName>Light     # (function) run to switch app to its light mode/theme.
+# <appName>Dark      # (function) run to switch app to its dark mode/theme.
+
+# Use CONFIG as the configuration directory in app definitions.
+# Adheres to freedesktop.org XDG Base Directory Specification
+# https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
+if test -z "${XDG_CONFIG_HOME}"; then
+  CONFIG="${XDG_CONFIG_HOME}"
+else
+  CONFIG="${HOME}/.config"
+fi
+
+apps=()
+
+# Helix Editor.
+
+helixEditorCommand="hx"
+helixConfigurationDirectory="${CONFIG}/helix"
+helixConfigurationFile="${helixConfigurationDirectory}/config.toml"
+
+function helixEditorInit {
+  # Ensure configuration exists.
+  mkdir -p "${helixConfigurationDirectory}"
+  if ! test -f "${helixConfigurationFile}"; then
+    echo 'theme = "default"' > "${helixConfigurationFile}"
+  fi
+}
+
+function helixEditorLight {
+  sed -i 's/theme = ".*"/theme = "onelight"/' "${CONFIG}/helix/config.toml"
+}
+
+function helixEditorDark {
+  sed -i 's/theme = ".*"/theme = "dracula"/' "${CONFIG}/helix/config.toml"
+}
+
+apps+=("helixEditor")
+
+# Bat
+
+batCommand="bat"
+
+function batInit {
+  # TODO
+}
+
+function batLight {
+  # TODO
+}
+
+function batDark {
+  # TODO
+}
+
+# Batcat
+# (on Debian and Ubuntu the bat binary is batcat)
+
+batCatCommand="batcat"
+batCatInit="batInit"
+batCatLight="batLight"
+batCatDark="batDark"
+
+# Delta
+
+deltaCommand="delta"
+
+function deltaInit {
+  # TODO
+}
+
+function deltaLight {
+  # TODO
+}
+
+function deltaDark {
+  # TODO
+}

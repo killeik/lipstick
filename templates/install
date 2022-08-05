@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+# TEMPLATE PROTECTOR START.
+echo 'This is a template. Run the build script to create actual install script.'
+exit 1
+# TEMPLATE PROTECTOR END.
+
 ######################################################################
 #
 # Console Colour Scheme Sync (c2s2) Installation Script.
@@ -30,9 +35,7 @@ scripts=()
 # Monitor script.
 
 read -rd '' monitorScript <<-EOF
-#!/usr/bin/env bash
-
-gsettings monitor org.gnome.desktop.interface color-scheme | xargs -L1 bash -c "source \${HOME}/.local/bin/c2s2-update"
+<<insert-c2s2-monitor-script>>
 EOF
 scripts+=("${monitorScript}")
 

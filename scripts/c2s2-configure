@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+# Configuration script. Finds installed apps and saves the list
+# to a script at ~/.config/c2s2/installed-apps. Also runs the
+# init functions for all installed apps.
+
+# Use CONFIG as the configuration directory in app definitions.
+# Adheres to freedesktop.org XDG Base Directory Specification
+# https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
+if test -z "${XDG_CONFIG_HOME}"; then
+  CONFIG="${XDG_CONFIG_HOME}"
+else
+  CONFIG="${HOME}/.config"
+fi
+
+# import apps
+source "${CONFIG}/apps"
+
+# Find and initialise support for all supported apps installed on this system.
+installedApps=()
+
+for app in ${apps[@]};
+do
+  appCommand="${app}Command"
+  if command -v "${!appCommand}" &> /dev/null; then
+    # App is installed.
+    echo "  - Found app: ${app}, adding support for it"
+    installedApps+=(app)
+    "${app}Init"
+  fi
+done
+
+# Save the list of installed apps.
+echo "#!/usr/bin/env bash\n\ninstalledApps=(${installedApps[@]})" > "${CONFIG}/installed-apps"
