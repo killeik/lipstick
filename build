@@ -10,20 +10,23 @@ scriptNames=("configure" "disable" "enable" "monitor" "uninstall" "update" "apps
 rm -rf ./dist
 mkdir -p ./dist
 
+INSTALL="dist/install"
+
 # Create install script.
-cat ./template/head.bash > dist/install
+cat ./template/head.bash > "${INSTALL}"
 
 # Bundle the scripts into install script.
 for scriptName in "${scriptNames[@]}"
 do
   tempVar="_${scriptName}"
-  echo "\nread -rd '' ${tempVar} <<-EOF" >> dist/install
-  cat "./scripts/lipstick-${scriptName}" >> dist/install
-  echo "EOF" >> dist/install
-  echo "files[${scriptName}]=${tempVar}"
+  echo "" >> "${INSTALL}"
+  echo "read -rd '' ${tempVar} <<-EOF" >> "${INSTALL}"
+  cat "./scripts/lipstick-${scriptName}" >> "${INSTALL}"
+  echo "EOF" >> "${INSTALL}"
+  echo "files[${scriptName}]=${tempVar}" >> "${INSTALL}"
 done
 
 # Complete install script.
-cat ./template/main.bash >> dist/install
+cat ./template/main.bash >> "${INSTALL}"
 
 echo 'Done.'
