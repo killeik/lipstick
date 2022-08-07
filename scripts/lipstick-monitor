@@ -3,4 +3,4 @@
 # When the system clour scheme changes, evaluate the update script.
 
 gsettings monitor org.gnome.desktop.interface color-scheme \
-  | xargs -L1 bash -c "source ${HOME}/.local/bin/c2s2-update"
+  | xargs -L1 bash -c "source ${HOME}/.local/bin/lipstick-update"

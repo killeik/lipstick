@@ -1,25 +1,26 @@
 #!/usr/bin/env bash
 
 # Configuration script. Finds installed apps and saves the list
-# to a script at ~/.config/c2s2/installed-apps. Also runs the
+# to a script at ~/.config/lipstick/installed-apps. Also runs the
 # init functions for all installed apps.
 
 # Use CONFIG as the configuration directory in app definitions.
 # Adheres to freedesktop.org XDG Base Directory Specification
 # https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
 if test -z "${XDG_CONFIG_HOME}"; then
-  CONFIG="${XDG_CONFIG_HOME}"
+  CONFIG="${XDG_CONFIG_HOME}/lipstick"
 else
-  CONFIG="${HOME}/.config"
+  CONFIG="${HOME}/.config/lipstick"
 fi
+mkdir -p "${CONFIG}"
 
-# import apps
-source "${CONFIG}/apps"
+# Import list of supported Lipstick apps.
+source "${CONFIG}/lipstick-apps"
 
 # Find and initialise support for all supported apps installed on this system.
 installedApps=()
 
-for app in ${apps[@]};
+for app in ${lipstickApps[@]};
 do
   appCommand="${app}Command"
   if command -v "${!appCommand}" &> /dev/null; then

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Defines apps that c2s2 supports.
+# Defines apps that Lipstick supports.
 #
 # App definition symbols use a naming convention based on the <appName>:
 #
@@ -22,7 +22,12 @@ fi
 
 apps=()
 
+
+################################################################################
+#
 # Helix Editor.
+#
+################################################################################
 
 helixEditorCommand="hx"
 helixConfigurationDirectory="${CONFIG}/helix"
@@ -46,7 +51,12 @@ function helixEditorDark {
 
 apps+=("helixEditor")
 
+
+################################################################################
+#
 # Bat
+#
+################################################################################
 
 batCommand="bat"
 
@@ -70,7 +80,12 @@ batCatInit="batInit"
 batCatLight="batLight"
 batCatDark="batDark"
 
+
+################################################################################
+#
 # Delta
+#
+################################################################################
 
 deltaCommand="delta"
 

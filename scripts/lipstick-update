@@ -4,16 +4,17 @@
 # Adheres to freedesktop.org XDG Base Directory Specification
 # https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
 if test -z "${XDG_CONFIG_HOME}"; then
-  CONFIG="${XDG_CONFIG_HOME}"
+  CONFIG="${XDG_CONFIG_HOME}/lipstick"
 else
-  CONFIG="${HOME}/.config"
+  CONFIG="${HOME}/.config/lipstick"
 fi
+mkdir -p "${CONFIG}"
 
 # Import list of all apps (apps), including their configuration functions,
 # as well as a list of the currently installed apps (installedApps) on this system.
-# (The latter is compiled by the c2s2-configure script run by the installer.)
-source "${CONFIG}/c2s2/all-apps"
-source "${CONFIG}/c2s2/installed-apps"
+# (The latter is compiled by the lipstick-configure script run by the installer.)
+source "${CONFIG}/lipstick-apps"
+source "${CONFIG}/installed-apps"
 
 if [[ "${1}" == "default" ]]; then
   colourScheme="Light"
@@ -22,7 +23,7 @@ else
 fi
 
 # Log the current mode to aid with troubleshooting.
-# Use journalctl --unit=c2s2.service to view the logs.
+# Use journalctl --unit=lipstick.service to view the logs.
 
 # Configure apps for the current colour scheme.
 for app in ${installedApps[@]};
