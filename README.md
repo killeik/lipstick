@@ -44,7 +44,7 @@ Some apps (e.g., [Helix Editor](https://helix-editor.com)), may [need to be rest
 
 ## Contribute
 
-To contribute app settings for other apps, please edit the [apps](scripts/apps) file and submit a pull request.
+To contribute app settings for other apps, please edit the [lipstick-apps](scripts/lipstick-apps) file and submit a pull request.
 
 ## Like this? Fund us!
 
