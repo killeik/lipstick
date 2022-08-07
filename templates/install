@@ -35,97 +35,44 @@ scripts=()
 # Monitor script.
 
 read -rd '' monitorScript <<-EOF
-<<insert-c2s2-monitor-script>>
+{{monitor-script}}
 EOF
 scripts+=("${monitorScript}")
 
 # Update script.
 
 read -rd '' updateScript <<-EOF
-#!/usr/bin/env bash
-
-if [[ "\${1}" == "default" ]]; then
-  # Activate light theme configuration.
-  source "\${HOME}/.config/c2s2/light"
-else
-  # Activate dark theme configuration.
-  source "\${HOME}/.config/c2s2/dark"
-fi
+{{update-script}}
 EOF
 scripts+=("${updateScript}")
 
 # Enable script.
 
 read -rd '' enableScript <<-EOF
-#!/usr/bin/env bash
-
-# Enable the c2s2 colour scheme change monitor to start on boot,
-# start it up immediately, and also run the update command right away.
-
-"${HOME}/.local/bin/c2s2-update"
-systemctl --user enable c2s2.service
-systemctl --user start c2s2.service
+{{enable-script}}
 EOF
 scripts+=("${enableScript}")
 
 # Disable script.
 
 read -rd '' disableScript <<-EOF
-#!/usr/bin/env bash
-
-# Stop the c2s2 colour scheme change monitor service immediately and
-# disable it from starting at boot.
-
-systemctl --user stop c2s2.service
-systemctl --user disable c2s2.service
+{{disable-script}}
 EOF
 scripts+=("${disableScript}")
 
 # Uninstall script.
 
 read -rd '' uninstallScript <<-EOF
-#!/usr/bin/env bash
-
-# Disables, stops, and uninstalls c2s2.
-
-"${HOME}/.local/bin/c2s2-disable"
-rm -rf "\${HOME}/.config/c2s2"
-rm "\${HOME}/.config/systemd/user/c2s2.service"
-rm "\${HOME}/.local/bin/c2s2-monitor"
-rm "\${HOME}/.local/bin/c2s2-update"
-rm "\${HOME}/.local/bin/c2s2-enable"
-rm "\${HOME}/.local/bin/c2s2-disable"
-rm "\${HOME}/.local/bin/c2s2-uninstall"
+{{uninstall-script}}
 EOF
 scripts+=("${uninstallScript}")
 
 # Light mode configuration script.
 
-read -rd '' lightModeConfigurationScript <<-EOF
-#!/usr/bin/env bash
-
-# Light mode configuration script
-#
-# Add app configurations here from:
-# https://codeberg.org/small-tech/c2s2/src/configurations.md
-
-echo '[c2s2] Switching to light mode.'
+read -rd '' appsScript <<-EOF
+{{apps-script}}
 EOF
-scripts+=("${lightModeConfigurationScript}")
-
-# Dark mode configuration script.
-
-read -rd '' darkModeConfigurationScript <<-EOF
-#!/usr/bin/env bash
-
-# Dark mode configuration script
-#
-# Add app configurations here from:
-# https://codeberg.org/small-tech/c2s2/src/configurations.md
-
-echo '[c2s2] Switching to dark mode.'
-EOF
-scripts+=("${darkModeConfigurationScript}")
+scripts+=("${appsScript}")
 
 # Systemd unit.
 

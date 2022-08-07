@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+# Disables, stops, and uninstalls Lipstick.
+
+"${HOME}/.local/bin/lipstick-disable"
+rm -rf "\${HOME}/.config/lipstick"
+rm "\${HOME}/.config/systemd/user/lipstick.service"
+rm "\${HOME}/.local/bin/lipstick-monitor"
+rm "\${HOME}/.local/bin/lipstick-update"
+rm "\${HOME}/.local/bin/lipstick-enable"
+rm "\${HOME}/.local/bin/lipstick-disable"
+rm "\${HOME}/.local/bin/lipstick-uninstall"

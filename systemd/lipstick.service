@@ -1,0 +1,13 @@
+[Unit]
+Description=Lipstick on a Pig
+Documentation=https://codeberg.org/small-tech/lipstick/src/README.md
+After=gnome-session.target
+
+[Service]
+Type=simple
+RestartSec=5
+Restart=always
+ExecStart=%h/.local/bin/lipstick-monitor
+
+[Install]
+WantedBy=gnome-session.target

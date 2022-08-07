@@ -1,3 +1,20 @@
 #!/usr/bin/env bash
 
 # Lipstick build script.
+scripts=()
+scriptNames=("configure" "disable" "enable" "monitor" "uninstall" "update" "apps")
+
+# Prepare install template.
+mkdir -p ./dist
+cp ./templates/install dist/ 
+
+# Bundle the scripts into install script.
+for scriptName in "${scriptNames[@]}"
+do
+  # Load script.
+  script=$(<"./scripts/lipstick-${scriptName}")
+  
+  # Bundle script into install template.
+  sed -i /"${}"// dist/install
+done
+
