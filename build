@@ -1,20 +1,29 @@
 #!/usr/bin/env bash
 
+echo "Building Lipstick on a Pig…"
+
 # Lipstick build script.
 scripts=()
 scriptNames=("configure" "disable" "enable" "monitor" "uninstall" "update" "apps")
 
-# Prepare install template.
+# Prepare distribution folder.
+rm -rf ./dist
 mkdir -p ./dist
-cp ./templates/install dist/ 
+
+# Create install script.
+cat ./template/head.bash > dist/install
 
 # Bundle the scripts into install script.
 for scriptName in "${scriptNames[@]}"
 do
-  # Load script.
-  script=$(<"./scripts/lipstick-${scriptName}")
-  
-  # Bundle script into install template.
-  sed -i /"${}"// dist/install
+  tempVar="_${scriptName}"
+  echo "\nread -rd '' ${tempVar} <<-EOF" >> dist/install
+  cat "./scripts/lipstick-${scriptName}" >> dist/install
+  echo "EOF" >> dist/install
+  echo "files[${scriptName}]=${tempVar}"
 done
 
+# Complete install script.
+cat ./template/main.bash >> dist/install
+
+echo 'Done.'
