@@ -2,21 +2,11 @@
 # Directory paths.
 
 binaryDirectory="${HOME}/.local/bin"
-configurationDirectory="${HOME}/.config/lipstick"
-systemdUserDirectory="${HOME}/.config/systemd/user"
+configurationDirectory="${CONFIG}/lipstick"
+systemdUserDirectory="${CONFIG}/systemd/user"
 
 # Script paths.
-
-scriptPaths=()
-scriptPaths+=("${binaryDirectory}/lipstick-monitor")   # monitor script
-scriptPaths+=("${binaryDirectory}/lipstick-update")    # update script
-scriptPaths+=("${binaryDirectory}/lipstick-enable")    # enable script
-scriptPaths+=("${binaryDirectory}/lipstick-disable")   # disable script
-scriptPaths+=("${binaryDirectory}/lipstick-uninstall") # uninstall script
-scriptPaths+=("${configurationDirectory}/light")   # light mode configuration script
-scriptPaths+=("${configurationDirectory}/dark")    # dark mode configuration script
-
-systemdUnitPath="${systemdUserDirectory}/lipstick.service"
+scripts=("monitor" "update" "enable" "disable" "uninstall" "apps")
 
 echo "  - Ensuring directories exist"
 
@@ -27,19 +17,24 @@ mkdir -p "${systemdUserDirectory}"
 
 echo "  - Writing script files and ensuring they’re executable"
 
-numberOfScripts=${#scripts[@]}
-for (( i=0; i<numberOfScripts; i++ ));
+for script in scripts;
 do
-  scriptPath="${scriptPaths[$i]}"
-  echo "${scripts[$i]}" > "${scriptPath}"
+  scriptName="lipstick-${script}"
+  scriptPath="${binaryDirectory}/${scriptName}"
+  echo "${files[$scriptName]}" > "${scriptPath}"
   chmod +x "${scriptPath}"
 done
 
-echo " -- Writing systemd unit file"
+echo "  -- Writing systemd unit file"
 
-echo "${systemdUnit}" > "${systemdUnitPath}"
+systemdUnitPath="${systemdUserDirectory}/lipstick.service"
+echo "${files['lipstick.service'}" > "${systemdUnitPath}"
 
-echo " -- Enabling lipstick service and starting it"
+echo "  -- Configuring Lipstick for supported apps found on system"
+
+lipstick-configure
+
+echo "  -- Enabling lipstick service and starting it"
 
 lipstick-enable
 
@@ -48,15 +43,14 @@ echo "Done."
 echo ""
 echo "Usage instructions"
 echo ""
-echo "To disable the service, run lipstick-disable"
-echo "To re-enable the service, run lipstick-enable"
-echo "To uninstall lipstick, run lipstick-uninstall"
+echo "Disable service         : lipstick-disable"
+echo "Re-enable service       : lipstick-enable"
+echo "Uninstall               : lipstick-uninstall"
 echo ""
-echo "Configure light mode settings in ~/.config/lipstick/light"
-echo "Configure dark mode settings in ~/.config/lipstick/dark"
+echo "Reconfigure             : lipstick-configure"
+echo "(after installing apps)"
 echo ""
-echo "Get app configurations from:"
-echo "https://codeberg.org/small-tech/lipstick/src/configurations.md"
+echo "Update to latest version: lipstick-update"
 echo ""
 echo "Enjoy!"
 echo ""
