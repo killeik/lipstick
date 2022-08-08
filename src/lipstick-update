@@ -1,32 +1,20 @@
 #!/usr/bin/env bash
 
-# Use CONFIG as the configuration directory in app definitions.
-# Adheres to freedesktop.org XDG Base Directory Specification
-# https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
-if test -z "${XDG_CONFIG_HOME}"; then
-  CONFIG="${XDG_CONFIG_HOME}/lipstick"
-else
-  CONFIG="${HOME}/.config/lipstick"
-fi
-mkdir -p "${CONFIG}"
+echo "Updating Lipstick on a Pig…"
 
-# Import list of all apps (apps), including their configuration functions,
-# as well as a list of the currently installed apps (installedApps) on this system.
-# (The latter is compiled by the lipstick-configure script run by the installer.)
-source "${CONFIG}/lipstick-apps"
-source "${CONFIG}/installed-apps"
-
-if [[ "${1}" == "default" ]]; then
-  colourScheme="Light"
+if command -v wget &> /dev/null; then
+  # Update using wget.
+  wget -qO- https://codeberg.org/small-tech/lipstick/raw/branch/main/install | bash
 else
-  colourScheme="Dark"
+  # wget does not exist, attempt to update using curl.
+  if command -v curl &> /dev/null; then
+    # Update using curl.
+    curl -s https://codeberg.org/small-tech/lipstick/raw/branch/main/install | bash
+  else
+    echo "Error: could not find wget or curl to download the update."
+    echo "Please install one of these apps and re-run lipstick-update."
+    exit 1
+  fi
 fi
 
-# Log the current mode to aid with troubleshooting.
-# Use journalctl --unit=lipstick.service to view the logs.
-
-# Configure apps for the current colour scheme.
-for app in ${installedApps[@]};
-do
-  "${app}${colourScheme}"
-done
+echo "Done."

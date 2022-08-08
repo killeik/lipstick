@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-# When the system clour scheme changes, evaluate the update script.
-
+# When system colour scheme changes, run sync script.
 gsettings monitor org.gnome.desktop.interface color-scheme \
-  | xargs -L1 bash -c "source ${HOME}/.local/bin/lipstick-update"
+  | xargs -L1 bash -c "source ${HOME}/.local/bin/lipstick-sync"
