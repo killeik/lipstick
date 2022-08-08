@@ -2,14 +2,16 @@
 
 ################################################################################
 #
-# Lipstick on a Pig
+# 🐷 Lipstick on a Pig
 #
-# Usage: lipstick <command>
+# 💄 Usage: lipstick <command>
+#
+# For list of commands, run lipstick help.
 #
 # For source code, documentation, etc., please see:
 # https://codeberg.org/small-tech/lipstick
 #
-# Copyright © 2023-present Aral Balkan, Small Technology Foundation
+# Copyright © 2022-present Aral Balkan, Small Technology Foundation
 # License: AGPL version 3.0.
 #
 ################################################################################
