@@ -1,59 +1,41 @@
 
-# Directory paths.
+# Writes string contents ($1) to file ($2).
+function writeFile { echo "${1}" > "${2}"; }
 
+# Writes string contents ($1) to file ($2) and makes it executable.
+function writeScript { writeFile "${1}" "${2}"; chmod +x "${2}"; }
+
+# Directory paths.
 binaryDirectory="${HOME}/.local/bin"
 configurationDirectory="${CONFIG}/lipstick"
 systemdUserDirectory="${CONFIG}/systemd/user"
 
-# Script paths.
-scripts=("monitor" "update" "enable" "disable" "uninstall" "apps")
-
 echo "  - Ensuring directories exist"
 
-# Ensure the directories we need exist.
 mkdir -p "${binaryDirectory}"
 mkdir -p "${configurationDirectory}"
 mkdir -p "${systemdUserDirectory}"
 
-echo "  - Writing script files and ensuring they’re executable"
+echo "  - Writing script files and making them executable"
 
-for script in scripts;
-do
-  scriptName="lipstick-${script}"
-  scriptPath="${binaryDirectory}/${scriptName}"
-  echo "${files[$scriptName]}" > "${scriptPath}"
-  chmod +x "${scriptPath}"
-done
+writeScript "${lipstick}" "${binaryDirectory}/lipstick"
+writeScript "${lipstickApps}" "${configurationDirectory}/lipstick-apps"
 
 echo "  -- Writing systemd unit file"
 
-systemdUnitPath="${systemdUserDirectory}/lipstick.service"
-echo "${files['lipstick.service'}" > "${systemdUnitPath}"
+writeFile "${lipstickService}" "${systemdUnitPath}/lipstick.service"
 
-echo "  -- Configuring Lipstick for supported apps found on system"
+echo "  -- Configuring Lipstick for supported apps on your system"
 
-lipstick-configure
+lipstick configure
 
 echo "  -- Enabling lipstick service and starting it"
 
-lipstick-enable
+lipstick enable
 
 echo ""
 echo "Done."
-echo ""
-echo "Usage instructions"
-echo ""
-echo "Disable service         : lipstick-disable"
-echo "Re-enable service       : lipstick-enable"
-echo "Uninstall               : lipstick-uninstall"
-echo ""
-echo "Reconfigure             : lipstick-configure"
-echo "(after installing apps)"
-echo ""
-echo "Update to latest version: lipstick-update"
-echo ""
-echo "Enjoy!"
-echo ""
-echo "💕 Small Technology Foundation"
-echo "https://small-tech.org"
-echo ""
+
+# To end, display usage instructions.
+
+lipstick help

@@ -31,7 +31,6 @@ else
   CONFIG="${HOME}/.config"
 fi
 
-# Files
-files=()
+# Embedded files.
 
 ######################################################################

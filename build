@@ -10,22 +10,23 @@ INSTALL="dist/install"
 function write  { echo "${1}" >> "${INSTALL}"; }
 function insert { cat "${1}" >> "${INSTALL}";  }
 
-function variableNameFrom {
-  nameWithUnderscores="${1/-/_}"
-  nameWithUnderscores="${nameWithUnderscores/./_}"
-  echo "${nameWithUnderscores}"
+function embed {
+  # Embed external file into bash variable in install script.
+  # $1: path of file to embed
+  # $2: name of variable to create
+
+  write ""
+  write "read -rd '' ${2} <<-EOF"
+  insert "./src/${1}"
+  write "EOF"
+  write ""
+  write "######################################################################"
 }
 
 scripts=()
-PREFIX="lipstick-"
 fileNames=(
-  "${PREFIX}configure" 
-  "${PREFIX}disable" 
-  "${PREFIX}enable" 
-  "${PREFIX}monitor" 
-  "${PREFIX}uninstall" 
-  "${PREFIX}update" 
-  "${PREFIX}apps"
+  "lipstick" 
+  "lipstick-apps"
   "lipstick.service"
 )
 
@@ -34,22 +35,13 @@ rm -rf ./dist
 mkdir -p ./dist
 
 # Start creating install script.
-insert ./template/head.bash
+insert template/head.bash
 
-# Bundle all source files into install script.
-for fileName in "${fileNames[@]}"
-do
-  tempVar=$(variableNameFrom "${fileName}")
-  write ""
-  write "read -rd '' ${tempVar} <<-EOF"
-  insert "./src/${fileName}"
-  write "EOF"
-  write "files[\"${fileName}\"]=\"\${${tempVar}}\""
-  write ""
-  write "######################################################################"
-done
+embed lipstick "lipstick"
+embed lipstick-apps "lipstickApps"
+embed lipstick.service "lipstickService"
 
 # Complete install script.
-insert ./template/main.bash
+insert template/main.bash
 
 echo 'Done.'
