@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-# Enable the Lipstick monitor to start on boot, start it up immediately,
-# and also run the update command right away.
-
-"${HOME}/.local/bin/lipstick-update"
-systemctl --user enable lipstick.service
-systemctl --user start lipstick.service
