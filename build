@@ -6,8 +6,15 @@ echo "Building Lipstick on a Pig…"
 
 # Helpers.
 INSTALL="dist/install"
+
 function write  { echo "${1}" >> "${INSTALL}"; }
 function insert { cat "${1}" >> "${INSTALL}";  }
+
+function variableNameFrom {
+  nameWithUnderscores="${1/-/_}"
+  nameWithUnderscores="${nameWithUnderscores/./_}"
+  echo "${nameWithUnderscores}"
+}
 
 scripts=()
 PREFIX="lipstick-"
@@ -32,12 +39,12 @@ insert ./template/head.bash
 # Bundle all source files into install script.
 for fileName in "${fileNames[@]}"
 do
-  tempVar="_${fileName}"
+  tempVar=$(variableNameFrom "${fileName}")
   write ""
   write "read -rd '' ${tempVar} <<-EOF"
   insert "./src/${fileName}"
   write "EOF"
-  write "files[${fileName}]=${tempVar}"
+  write "files[\"${fileName}\"]=\"\${${tempVar}}\""
   write ""
   write "######################################################################"
 done
