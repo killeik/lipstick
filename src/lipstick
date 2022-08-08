@@ -1,13 +1,36 @@
 #!/usr/bin/env bash
 
-# Lipstick
+################################################################################
+#
+# Lipstick on a Pig
+#
+# Usage: lipstick <command>
+#
+# For source code, documentation, etc., please see:
+# https://codeberg.org/small-tech/lipstick
+#
+# Copyright © 2023-present Aral Balkan, Small Technology Foundation
+# License: AGPL version 3.0.
+#
+################################################################################
 
 VERSION="1.0"
 
+# If we’re being sourced instead of being launched from the command-line
+# (i.e., if the first argument is not our own path), we know it’s the systemd
+# service calling us and we run the sync function.
+
+if [[ ! "${0}" =~ .*lipstick$ ]]; then
+  # Called by systemd service. Run sync and exit.
+  sync "${1}"
+  exit
+fi
+
+# Parse command.
+
 case $1 in
   configure     ) configure ;;
-  monitor       ) monitor   ;;  # private; undocumented.
-  sync          ) sync      ;;  # private; undocumented.
+  monitor       ) monitor   ;;  # private; only used by systemd service.
   enable        ) enable    ;;
   disable       ) disable   ;;
   update        ) update    ;;
@@ -15,15 +38,17 @@ case $1 in
   *             ) help      ;;
 esac
 
-# Use CONFIG as the configuration directory in app definitions.
-# Adheres to freedesktop.org XDG Base Directory Specification
+# Binary and configuration path usage adheres to 
+# freedesktop.org XDG Base Directory Specification
 # https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
-if test -z "${XDG_CONFIG_HOME}"; then
-  CONFIG="${XDG_CONFIG_HOME}/lipstick"
+
+if test -z "${XDG_DATA_HOME}"; then
+  DATA_HOME="${XDG_DATA_HOME}"
 else
-  CONFIG="${HOME}/.config/lipstick"
+  DATA_HOME="${HOME}/.local/share"
 fi
-mkdir -p "${CONFIG}"
+LIPSTICK_DATA_HOME="${DATA_HOME}/lipstick"
+BINARY_HOME="${HOME}/.local/bin"
 
 
 function configure {
@@ -42,14 +67,14 @@ function configure {
   done
 
   # Save the list of installed apps.
-  echo "#!/usr/bin/env bash\n\ninstalledApps=(${installedApps[@]})" > "${CONFIG}/installed-apps"
+  echo -e "#!/usr/bin/env bash\n\ninstalledApps=(${installedApps[@]})" > "${LIPSTICK_DATA_HOME}/installed-apps"
 }
 
 
 function monitor {
   # When system colour scheme changes, run sync script.
   gsettings monitor org.gnome.desktop.interface color-scheme \
-    | xargs -L1 bash -c "source ${HOME}/.local/bin/lipstick-sync"
+    | xargs -L1 bash -c "source ${BINARY_HOME}/lipstick sync"
 }
 
 
@@ -57,8 +82,8 @@ function sync {
   # Import list of all apps (apps), including their configuration functions,
   # as well as a list of the currently installed apps (installedApps) on this system.
   # (The latter is compiled by the lipstick-configure script run by the installer.)
-  source "${CONFIG}/lipstick-apps"
-  source "${CONFIG}/installed-apps"
+  source "${LIPSTICK_DATA_HOME}/lipstick-apps"
+  source "${LIPSTICK_DATA_HOME}/installed-apps"
 
   if [[ "${1}" == "default" ]]; then
     colourScheme="Light"
@@ -68,6 +93,7 @@ function sync {
 
   # Log the current mode to aid with troubleshooting.
   # Use journalctl --unit=lipstick.service to view the logs.
+  echo "🐷 Switching to ${colourScheme} Mode."
 
   # Configure apps for the current colour scheme.
   for app in ${installedApps[@]};
@@ -79,9 +105,8 @@ function sync {
 
 function enable {
   # Enable the Lipstick monitor to start on boot, start it up immediately,
-  # and also run the update command right away.
-
-  "${HOME}/.local/bin/lipstick-update"
+  # and also run the sync command right away.
+  sync
   systemctl --user enable lipstick.service
   systemctl --user start lipstick.service
 }
@@ -90,7 +115,6 @@ function enable {
 function disable {
   # Stop the Lipstick colour scheme change monitor service immediately and
   # disable it from starting at boot.
-
   systemctl --user stop lipstick.service
   systemctl --user disable lipstick.service
 }
@@ -98,7 +122,7 @@ function disable {
 
 function update {
   # Update Lipstick on a Pig.
-  echo "Updating Lipstick on a Pig…"
+  echo "🐷 Updating Lipstick on a Pig…"
 
   if command -v wget &> /dev/null; then
     # Update using wget.
@@ -115,26 +139,31 @@ function update {
     fi
   fi
 
-  echo "Done."
+  echo "💄 Done."
 }
 
 
 function uninstall {
-  "${BIN}/lipstick disable"
+  # Uninstall Lipstick on a Pig.
+  echo "🐷 Uninstalling Lipstick on a Pig…"
 
-  rm -rf "${CONFIG}/lipstick"
-  rm "${CONFIG}/systemd/user/lipstick.service"
-  rm "${BIN}/lipstick"
+  disable
+
+  rm -rf "${CONFIG_HOME}/lipstick"
+  rm "${CONFIG_HOME}/systemd/user/lipstick.service"
+  rm "${BINARY_HOME}/lipstick"
+  
+  echo "💄 Done."
 }
 
 
 function help {
   echo ""
-  echo "🐷 Lipstick version ${VERSION}"
+  echo "🐷 Lipstick on a Pig version ${VERSION}"
   echo ""
   echo "Usage: lipstick <command>"
   echo ""
-  echo "Comands:"
+  echo "Commands:"
   echo ""
   echo "configure: update config (e.g., after installing a new app)"
   echo "update   : update to latest version of Lipstick on a Pig."
@@ -142,7 +171,10 @@ function help {
   echo "disable  : disable and stop the systemd service"
   echo "uninstall: uninstall Lipstick on a Pig."
   echo ""
-  echo "Enjoy!"
+  echo "To access source code, file an issue, etc., please see:"
+  echo "https://codeberg.org/small-tech/lipstick"
+  echo ""
+  echo "💄 Enjoy!"
   echo ""
   echo "💕 Like this? Fund us!"
   echo "   https://small-tech.org/fund-us"
