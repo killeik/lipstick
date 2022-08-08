@@ -1,34 +1,48 @@
 #!/usr/bin/env bash
 
+# Lipstick build script.
+
 echo "Building Lipstick on a Pig…"
 
-# Lipstick build script.
+# Helpers.
+INSTALL="dist/install"
+function write  { echo "${1}" >> "${INSTALL}"; }
+function insert { cat "${1}" >> "${INSTALL}";  }
+
 scripts=()
-scriptNames=("configure" "disable" "enable" "monitor" "uninstall" "update" "apps")
+PREFIX="lipstick-"
+fileNames=(
+  "${PREFIX}configure" 
+  "${PREFIX}disable" 
+  "${PREFIX}enable" 
+  "${PREFIX}monitor" 
+  "${PREFIX}uninstall" 
+  "${PREFIX}update" 
+  "${PREFIX}apps"
+  "lipstick.service"
+)
 
 # Prepare distribution folder.
 rm -rf ./dist
 mkdir -p ./dist
 
-INSTALL="dist/install"
+# Start creating install script.
+insert ./template/head.bash
 
-# Create install script.
-cat ./template/head.bash > "${INSTALL}"
-
-# Bundle the scripts into install script.
-for scriptName in "${scriptNames[@]}"
+# Bundle all source files into install script.
+for fileName in "${fileNames[@]}"
 do
-  tempVar="_${scriptName}"
-  echo "" >> "${INSTALL}"
-  echo "read -rd '' ${tempVar} <<-EOF" >> "${INSTALL}"
-  cat "./scripts/lipstick-${scriptName}" >> "${INSTALL}"
-  echo "EOF" >> "${INSTALL}"
-  echo "files[${scriptName}]=${tempVar}" >> "${INSTALL}"
-  echo "" >> "${INSTALL}"
-  echo "######################################################################" >> "${INSTALL}"
+  tempVar="_${fileName}"
+  write ""
+  write "read -rd '' ${tempVar} <<-EOF"
+  insert "./src/${fileName}"
+  write "EOF"
+  write "files[${fileName}]=${tempVar}"
+  write ""
+  write "######################################################################"
 done
 
 # Complete install script.
-cat ./template/main.bash >> "${INSTALL}"
+insert ./template/main.bash
 
 echo 'Done.'
