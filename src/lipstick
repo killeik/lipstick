@@ -83,7 +83,7 @@ function sync {
 }
 
 
-function enable {
+function enableService {
   # Enable the Lipstick monitor to start on boot, start it up immediately,
   # and also run the sync command right away.
   sync
@@ -92,7 +92,7 @@ function enable {
 }
 
 
-function disable {
+function disableService {
   # Stop the Lipstick colour scheme change monitor service immediately and
   # disable it from starting at boot.
   systemctl --user stop lipstick.service
@@ -127,7 +127,7 @@ function uninstall {
   # Uninstall Lipstick on a Pig.
   echo "🐷 Uninstalling Lipstick on a Pig…"
 
-  disable
+  disableService
 
   rm -rf "${CONFIG_HOME}/lipstick"
   rm "${CONFIG_HOME}/systemd/user/lipstick.service"
@@ -178,13 +178,13 @@ function main {
   # Parse command.
 
   case $1 in
-    configure     ) configure ;;
-    monitor       ) monitor   ;;  # private; only used by systemd service.
-    enable        ) enable    ;;
-    disable       ) disable   ;;
-    update        ) update    ;;
-    uninstall     ) uninstall ;;
-    *             ) showHelp  ;;
+    configure     ) configure      ;;
+    monitor       ) monitor        ;;  # private; only used by systemd service.
+    enable        ) enableService  ;;
+    disable       ) disableService ;;
+    update        ) update         ;;
+    uninstall     ) uninstall      ;;
+    *             ) showHelp       ;;
   esac
 }
 
