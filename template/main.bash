@@ -1,3 +1,4 @@
+# Embedded files: end.
 
 # Writes string contents ($1) to file ($2).
 function writeFile { echo "${1}" > "${2}"; }

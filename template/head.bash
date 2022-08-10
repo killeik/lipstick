@@ -31,6 +31,6 @@ else
   CONFIG="${HOME}/.config"
 fi
 
-# Embedded files.
+# Embedded files: start.
 
 ######################################################################
