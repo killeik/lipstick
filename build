@@ -59,4 +59,7 @@ embed lipstick.service "lipstickService"
 # Complete install script.
 insert template/main.bash
 
+# Mark install script as executable.
+chmod +x dist/install
+
 echo 'Done.'
