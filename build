@@ -7,14 +7,23 @@ echo "Building Lipstick on a Pig…"
 # Helpers.
 INSTALL="dist/install"
 
-function write  { echo "${1}" >> "${INSTALL}"; }
-function insert { cat "${1}" >> "${INSTALL}";  }
+function write  {
+  # Append passed string ($1) to the install script.
+  echo "${1}" >> "${INSTALL}"; 
+}
+
+function insert {
+  # Append file at path ($1) to the install script,
+  # making sure we escape dollar signs so as not
+  # to have the code altered when the install script
+  # runs.
+  cat "${1}" | sed s/\\$/\\\\$/g >> "${INSTALL}";  
+}
 
 function embed {
   # Embed external file into bash variable in install script.
   # $1: path of file to embed
   # $2: name of variable to create
-
   write ""
   write "read -rd '' ${2} <<-EOF"
   insert "./src/${1}"
