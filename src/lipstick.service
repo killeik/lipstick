@@ -7,7 +7,7 @@ After=gnome-session.target
 Type=simple
 RestartSec=5
 Restart=always
-ExecStart=%h/.local/bin/lipstick-monitor
+ExecStart=%h/.local/bin/lipstick monitor
 
 [Install]
 WantedBy=gnome-session.target
