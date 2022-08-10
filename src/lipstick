@@ -37,7 +37,7 @@ case $1 in
   disable       ) disable   ;;
   update        ) update    ;;
   uninstall     ) uninstall ;;
-  *             ) help      ;;
+  *             ) showHelp  ;;
 esac
 
 # Binary and configuration path usage adheres to 
@@ -159,7 +159,7 @@ function uninstall {
 }
 
 
-function help {
+function showHelp {
   echo ""
   echo "🐷 Lipstick on a Pig version ${VERSION}"
   echo ""
