@@ -9,15 +9,21 @@ INSTALL="dist/install"
 
 function write  {
   # Append passed string ($1) to the install script.
-  echo "${1}" >> "${INSTALL}"; 
+  echo "${1}" >> "${INSTALL}"
 }
 
 function insert {
+  # Append file at path ($1) to the install script without
+  # altering it in any way.
+  cat "${1}" >> "${INSTALL}"
+}
+
+function insertEscaped {
   # Append file at path ($1) to the install script,
   # making sure we escape dollar signs so as not
   # to have the code altered when the install script
   # runs.
-  cat "${1}" | sed s/\\$/\\\\$/g >> "${INSTALL}";  
+  cat "${1}" | sed s/\\$/\\\\$/g >> "${INSTALL}"
 }
 
 function embed {
@@ -26,7 +32,7 @@ function embed {
   # $2: name of variable to create
   write ""
   write "read -rd '' ${2} <<-EOF"
-  insert "./src/${1}"
+  insertEscaped "./src/${1}"
   write "EOF"
   write ""
   write "######################################################################"

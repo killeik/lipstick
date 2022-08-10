@@ -22,15 +22,6 @@
 echo "🐷 Installing Lipstick on a Pig…"
 echo ""
 
-# Use CONFIG as the configuration directory in app definitions.
-# Adheres to freedesktop.org XDG Base Directory Specification
-# https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
-if test -z "${XDG_CONFIG_HOME}"; then
-  CONFIG="${XDG_CONFIG_HOME}"
-else
-  CONFIG="${HOME}/.config"
-fi
-
 # Embedded files: start.
 
 ######################################################################
