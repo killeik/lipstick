@@ -5,14 +5,13 @@
 # freedesktop.org XDG Base Directory Specification
 # https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
 
-if test -z "${XDG_DATA_HOME}"; then
-  DATA_HOME="${XDG_DATA_HOME}"
-else
-  DATA_HOME="${HOME}/.local/share"
-fi
-LIPSTICK_DATA_HOME="${DATA_HOME}/lipstick"
 BINARY_HOME="${HOME}/.local/bin"
-SYSTEMD_USER_DIRECTORY="${CONFIG}/systemd/user"
+
+DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+LIPSTICK_DATA_HOME="${DATA_HOME}/lipstick"
+
+CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+SYSTEMD_USER_DIRECTORY="${CONFIG_HOME}/systemd/user"
 
 # Writes string contents ($1) to file ($2).
 function writeFile { echo "${1}" > "${2}"; }

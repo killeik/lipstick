@@ -21,15 +21,9 @@ VERSION="1.0"
 # Binary and configuration path usage adheres to 
 # freedesktop.org XDG Base Directory Specification
 # https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
-
-if test -z "${XDG_DATA_HOME}"; then
-  DATA_HOME="${XDG_DATA_HOME}"
-else
-  DATA_HOME="${HOME}/.local/share"
-fi
+DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 LIPSTICK_DATA_HOME="${DATA_HOME}/lipstick"
 BINARY_HOME="${HOME}/.local/bin"
-
 
 function configure {
   # Find and initialise support for all supported apps installed on this system.
