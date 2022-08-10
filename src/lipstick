@@ -29,6 +29,9 @@ LIPSTICK_DATA_HOME="${DATA_HOME}/lipstick"
 CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 SYSTEMD_USER_DIRECTORY="${CONFIG_HOME}/systemd/user"
 
+ALL_SCRIPT_ARGUMENTS="$@"
+RUNNING_PROGRAM_NAME="${0}"
+
 function configure {
   # Find and initialise support for all supported apps installed on this system.
   installedApps=()
@@ -57,6 +60,10 @@ function monitor {
 
 
 function sync {
+  # Run all colour scheme updates for configured apps based on
+  # the passed colour scheme ($1). Possible values are “default” for light and
+  # anything else for dark.
+  
   # Import list of all apps (apps), including their configuration functions,
   # as well as a list of the currently installed apps (installedApps) on this system.
   # (The latter is compiled by the lipstick-configure script run by the installer.)
@@ -83,8 +90,8 @@ function sync {
 
 function enableService {
   # Enable the Lipstick monitor to start on boot, start it up immediately,
-  # and also run the sync command right away.
-  sync
+  # and also run the sync command right away with the current colour scheme.
+  sync `gsettings get org.gnome.desktop.interface color-scheme`
   systemctl --user enable lipstick.service
   systemctl --user start lipstick.service
 }
@@ -162,12 +169,13 @@ function showHelp {
 
 function main {
   # If we’re being sourced instead of being launched from the command-line
-  # (i.e., if the first argument is not our own path), we know it’s the systemd
-  # service calling us and we run the sync function.
+  # the running program name ($0) will not include our script name.
+  # This is how we know it’s the systemd service calling us and that 
+  # we should run the sync function.
 
-  if [[ ! "${0}" =~ .*lipstick$ ]]; then
+  if [[ ! "${RUNNING_PROGRAM_NAME}" =~ .*lipstick$ ]]; then
     # Called by systemd service. Run sync and exit.
-    sync "${1}"
+    sync "${ALL_SCRIPT_ARGUMENTS}"
     exit
   fi
 
@@ -184,4 +192,4 @@ function main {
   esac
 }
 
-main "$@"
+main "${ALL_SCRIPT_ARGUMENTS}"
