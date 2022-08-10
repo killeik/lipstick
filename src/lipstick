@@ -21,9 +21,13 @@ VERSION="1.0"
 # Binary and configuration path usage adheres to 
 # freedesktop.org XDG Base Directory Specification
 # https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
+BINARY_HOME="${HOME}/.local/bin"
+
 DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 LIPSTICK_DATA_HOME="${DATA_HOME}/lipstick"
-BINARY_HOME="${HOME}/.local/bin"
+
+CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+SYSTEMD_USER_DIRECTORY="${CONFIG_HOME}/systemd/user"
 
 function configure {
   # Find and initialise support for all supported apps installed on this system.
@@ -102,7 +106,7 @@ function update {
     # Update using wget.
     wget -qO- https://codeberg.org/small-tech/lipstick/raw/branch/main/install | bash
   else
-    # wget does not exist, attempt to update using curl.
+    # As wget does not exist, attempt to update using curl.
     if command -v curl &> /dev/null; then
       # Update using curl.
       curl -s https://codeberg.org/small-tech/lipstick/raw/branch/main/install | bash
@@ -123,7 +127,7 @@ function uninstall {
 
   disableService
 
-  rm -rf "${CONFIG_HOME}/lipstick"
+  rm -rf "${LIPSTICK_DATA_HOME}"
   rm "${CONFIG_HOME}/systemd/user/lipstick.service"
   rm "${BINARY_HOME}/lipstick"
   
