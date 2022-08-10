@@ -2,7 +2,7 @@
 
 # Lipstick build script.
 
-echo "Building Lipstick on a Pig…"
+echo -n "🐷 Building Lipstick on a Pig…"
 
 # Helpers.
 INSTALL="dist/install"
@@ -62,4 +62,4 @@ insert template/main.bash
 # Mark install script as executable.
 chmod +x dist/install
 
-echo 'Done.'
+echo ' 💄 Done.'
