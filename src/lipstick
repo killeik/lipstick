@@ -143,7 +143,6 @@ function uninstall {
 
 
 function showHelp {
-  echo ""
   echo "🐷 Lipstick on a Pig version ${VERSION}"
   echo ""
   echo "💄 Usage: lipstick <command>"
@@ -164,7 +163,6 @@ function showHelp {
   echo ""
   echo "Copyright 2022-present Aral Balkan, Small Technology Foundation"
   echo "Released under AGPL version 3.0"
-  echo ""
 }
 
 function main {
