@@ -58,14 +58,17 @@ batCommand="bat"
 
 function batInit {
   # TODO
+  true
 }
 
 function batLight {
   # TODO
+  true
 }
 
 function batDark {
   # TODO
+  true
 }
 
 # Batcat
@@ -87,12 +90,15 @@ deltaCommand="delta"
 
 function deltaInit {
   # TODO
+  true
 }
 
 function deltaLight {
   # TODO
+  true
 }
 
 function deltaDark {
   # TODO
+  true
 }
