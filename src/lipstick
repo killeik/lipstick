@@ -88,6 +88,12 @@ function sync {
 }
 
 
+function status {
+  echo "🐷 Lipstick on a Pig: service status"
+  systemctl status --user lipstick
+}
+
+
 function enableService {
   # Enable the Lipstick monitor to start on boot, start it up immediately,
   # and also run the sync command right away with the current colour scheme.
@@ -182,6 +188,7 @@ function main {
   case $1 in
     configure     ) configure      ;;
     monitor       ) monitor        ;;  # private; only used by systemd service.
+    status        ) status         ;;
     enable        ) enableService  ;;
     disable       ) disableService ;;
     update        ) update         ;;
