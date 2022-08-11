@@ -32,16 +32,19 @@ SYSTEMD_USER_DIRECTORY="${CONFIG_HOME}/systemd/user"
 RUNNING_PROGRAM_NAME="${0}"
 
 function configure {
+  # Import list of all apps (apps), including their configuration functions.
+  source "${LIPSTICK_DATA_HOME}/lipstick-apps"
+
   # Find and initialise support for all supported apps installed on this system.
   installedApps=()
 
-  for app in ${lipstickApps[@]};
+  for app in ${apps[@]};
   do
     appCommand="${app}Command"
     if command -v "${!appCommand}" &> /dev/null; then
       # App is installed.
       echo "  - Found app: ${app}, adding support for it"
-      installedApps+=(app)
+      installedApps+=("${app}")
       "${app}Init"
     fi
   done
@@ -79,9 +82,12 @@ function sync {
   # Use journalctl --unit=lipstick.service to view the logs.
   echo "🐷 Switching to ${colourScheme} Mode."
 
+  echo "> ${installedApps}"
+
   # Configure apps for the current colour scheme.
   for app in ${installedApps[@]};
   do
+    echo "> Setting colour scheme ${colourScheme} for app ${app} (${app}${colourScheme})"
     "${app}${colourScheme}"
   done
 }

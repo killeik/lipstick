@@ -19,6 +19,8 @@ function writeFile { echo "${1}" > "${2}"; }
 # Writes string contents ($1) to file ($2) and makes it executable.
 function writeScript { writeFile "${1}" "${2}"; chmod +x "${2}"; }
 
+set -e
+
 echo "  • Ensuring directories exist"
 
 mkdir -p "${BINARY_HOME}"
@@ -40,7 +42,7 @@ lipstick configure
 
 echo "  • Enabling lipstick service and starting it"
 
-lipstick enable
+lipstick enable &> /dev/null
 
 echo ""
 echo "💄 Done."
