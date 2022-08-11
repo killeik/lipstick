@@ -87,13 +87,24 @@ function sync {
   done
 }
 
-
-function status {
+function showSmallHeader {
   echo "🐷 Lipstick on a Pig"
   echo ""
+}
+
+
+function status {
+  # Show systemd service status.
+  showSmallHeader
   systemctl status --user lipstick
 }
 
+
+function logs {
+  # Show systemd service logs.
+  showSmallHeader
+  journalctl --user --unit=lipstick --follow
+}
 
 function enableService {
   # Enable the Lipstick monitor to start on boot, start it up immediately,
@@ -114,7 +125,7 @@ function disableService {
 
 function update {
   # Update Lipstick on a Pig.
-  echo "🐷 Updating Lipstick on a Pig…"
+  echo -n "🐷 Updating Lipstick on a Pig…"
 
   if command -v wget &> /dev/null; then
     # Update using wget.
@@ -131,7 +142,7 @@ function update {
     fi
   fi
 
-  echo "💄 Done."
+  echo " 💄 Done."
 }
 
 
@@ -159,6 +170,7 @@ function showHelp {
   echo "configure: update config (e.g., after installing a new app)"
   echo "update   : update to latest version of Lipstick on a Pig."
   echo "status   : display status of systemd service"
+  echo "logs     : display systemd service logs"
   echo "enable   : enable and start systemd service"
   echo "disable  : disable and stop systemd service"
   echo "uninstall: uninstall Lipstick on a Pig."
@@ -191,6 +203,7 @@ function main {
     configure     ) configure      ;;
     monitor       ) monitor        ;;  # private; only used by systemd service.
     status        ) status         ;;
+    logs          ) logs           ;;
     enable        ) enableService  ;;
     disable       ) disableService ;;
     update        ) update         ;;
