@@ -29,7 +29,6 @@ LIPSTICK_DATA_HOME="${DATA_HOME}/lipstick"
 CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 SYSTEMD_USER_DIRECTORY="${CONFIG_HOME}/systemd/user"
 
-ALL_SCRIPT_ARGUMENTS="$@"
 RUNNING_PROGRAM_NAME="${0}"
 
 function configure {
@@ -55,7 +54,7 @@ function configure {
 function monitor {
   # When system colour scheme changes, run sync script.
   gsettings monitor org.gnome.desktop.interface color-scheme \
-    | xargs -L1 bash -c "source ${BINARY_HOME}/lipstick sync"
+    | xargs -L1 bash -c "source ${BINARY_HOME}/lipstick"
 }
 
 
@@ -70,6 +69,7 @@ function sync {
   source "${LIPSTICK_DATA_HOME}/lipstick-apps"
   source "${LIPSTICK_DATA_HOME}/installed-apps"
 
+  echo "COLOUR SCHEME: ${1}"
   if [[ "${1}" == "default" ]]; then
     colourScheme="Light"
   else
@@ -195,7 +195,7 @@ function main {
 
   if [[ ! "${RUNNING_PROGRAM_NAME}" =~ .*lipstick$ ]]; then
     # Called by systemd service. Run sync and exit.
-    sync "${ALL_SCRIPT_ARGUMENTS}"
+    sync "${1}"
     exit
   fi
 
@@ -214,4 +214,5 @@ function main {
   esac
 }
 
-main "${ALL_SCRIPT_ARGUMENTS}"
+# Run main, passing in the arguments that were passed to the script.
+main $@
