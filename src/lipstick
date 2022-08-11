@@ -89,7 +89,8 @@ function sync {
 
 
 function status {
-  echo "🐷 Lipstick on a Pig: service status"
+  echo "🐷 Lipstick on a Pig"
+  echo ""
   systemctl status --user lipstick
 }
 
