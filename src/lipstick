@@ -69,7 +69,6 @@ function sync {
   source "${LIPSTICK_DATA_HOME}/lipstick-apps"
   source "${LIPSTICK_DATA_HOME}/installed-apps"
 
-  echo "COLOUR SCHEME: ${1}"
   if [[ "${1}" == "default" ]]; then
     colourScheme="Light"
   else
