@@ -43,7 +43,7 @@ function configure {
     appCommand="${app}Command"
     if command -v "${!appCommand}" &> /dev/null; then
       # App is installed.
-      echo "  - Found app: ${app}, adding support for it"
+      echo "  • Found app: ${app} (${appCommand}), adding support for it"
       installedApps+=("${app}")
       "${app}Init"
     fi
