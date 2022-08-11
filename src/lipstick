@@ -148,9 +148,11 @@ function update {
 
 function uninstall {
   # Uninstall Lipstick on a Pig.
+  set -e
+
   echo -n "🐷 Uninstalling Lipstick on a Pig…"
 
-  disableService
+  disableService &> /dev/null
 
   rm -rf "${LIPSTICK_DATA_HOME}"
   rm "${CONFIG_HOME}/systemd/user/lipstick.service"
