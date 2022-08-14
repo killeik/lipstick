@@ -10,6 +10,12 @@
 #                    #   be necessary (e.g., ensuring app configuration file exists).
 # <appName>Light     # (function) run to switch app to its light mode/theme.
 # <appName>Dark      # (function) run to switch app to its dark mode/theme.
+#
+# Remember that the various functions above will be called in different processes
+# so do not update global variables from within them and expect other functions for
+# your app to read that value. e.g., when getting config paths from the app itself
+# (see bat app for an example of this), repeat the command in each of your functions
+# that needs access to that path.
 
 # Use CONFIG_HOME as the configuration directory in app definitions.
 # Adheres to freedesktop.org XDG Base Directory Specification
@@ -57,28 +63,58 @@ apps+=("helixEditor")
 batCommand="bat"
 
 function batInit {
-  # TODO
-  true
+  # Ensure configuration exists.
+  configDirectory=`bat --config-dir`
+  configFile=`bat --config-file`
+
+  if [[ ! -f "${configFile}" ]]; then
+    mkdir -p "${configDirectory}"
+    echo -e "--theme=\"\"\n" > "${configFile}"
+  fi
 }
 
 function batLight {
-  # TODO
-  true
+  configFile=`bat --config-file`
+  sed -i 's/theme=".*"/theme="Monokai Extended Light"/' "${configFile}"
 }
 
 function batDark {
-  # TODO
-  true
+  configFile=`bat --config-file`
+  sed -i 's/theme=".*"/theme="Dracula"/' "${configFile}"
 }
 
-# Batcat
-# (on Debian and Ubuntu the bat binary is batcat)
+apps+=("bat")
 
-batCatCommand="batcat"
-batCatInit="batInit"
-batCatLight="batLight"
-batCatDark="batDark"
+################################################################################
+#
+# Batcat (on Debian and Ubuntu, the bat binary is called batcat).
+#
+################################################################################
 
+batcatCommand="batcat"
+
+function batcatInit {
+  # Ensure configuration exists.
+  configDirectory=`batcat --config-dir`
+  configFile=`batcat --config-file`
+
+  if [[ ! -f "${configFile}" ]]; then
+    mkdir -p "${configDirectory}"
+    echo -e "--theme=\"\"\n" > "${configFile}"
+  fi
+}
+
+function batcatLight {
+  configFile=`batcat --config-file`
+  sed -i 's/theme=".*"/theme="Monokai Extended Light"/' "${configFile}"
+}
+
+function batcatDark {
+  configFile=`batcat --config-file`
+  sed -i 's/theme=".*"/theme="Dracula"/' "${configFile}"
+}
+
+apps+=("batcat")
 
 ################################################################################
 #
