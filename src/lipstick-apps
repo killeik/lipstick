@@ -155,7 +155,7 @@ function deltaInit {
     else
       # Add just the syntax-theme section.
       echo "Delta init: .gitconfig and [delta] section exist but syntax-theme is not declared."
-      sed -i "s/\[delta\]/${themeDefinition}" "${deltaConfigFile}"
+      sed -i "s/\[delta\]/${themeDefinition}/" "${deltaConfigFile}"
     fi
   else
       # [delta] section does not exist. Add it.
