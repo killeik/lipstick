@@ -42,6 +42,14 @@ Lipstick will automatically find supported apps on your system and configure its
 
 Some apps (e.g., [Helix Editor](https://helix-editor.com)), may [need to be restarted](https://github.com/helix-editor/helix/issues/2158#issuecomment-1201083242) for the changes to take effect.
 
+## Fedora Silverblue with toolbox/Distrobox (Podman containers)
+
+There seems to be a bug with `systemd --user` services where they cannot find system binaries. I haven’t created a simple reproduction of this yet (although you can see it by running Lipstick from host and from within the default toolbox container – `toolbox enter`).
+
+For the time being, for Lipstick to work properly with all apps (e.g. bat, where we use bat itself –  `bat --config-file`, etc. – to find configuration paths) you must install it from the host system.
+
+I’m going to open an issue about this in the relevant repository once I have a simpler reproduction.
+
 ## Contribute
 
 To contribute app settings for other apps, please edit the [lipstick-apps](scripts/lipstick-apps) file and submit a pull request.
