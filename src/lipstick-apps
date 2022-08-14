@@ -142,7 +142,6 @@ function deltaInit {
   # If a .gitconfig file doesn’t exist, create one and add a
   # Delta section with a default theme.
   if [[ ! -f "${deltaConfigFile}" ]]; then
-    echo 'Delta init: .gitconfig does not exist. Creating.'
     echo -e "${themeDefinition}" > "${deltaConfigFile}"
     exit
   fi
@@ -151,15 +150,13 @@ function deltaInit {
   if grep -q "\[delta\]" ~/.gitconfig; then
     if grep -q "syntax-theme =" ~/.gitconfig; then
       # All good, everything we need exists.
-      echo 'Delta init: All good; no need to configure. Exiting.'
+      true
     else
       # Add just the syntax-theme section.
-      echo "Delta init: .gitconfig and [delta] section exist but syntax-theme is not declared."
       sed -i "s/\[delta\]/${themeDefinition}/" "${deltaConfigFile}"
     fi
   else
       # [delta] section does not exist. Add it.
-      echo 'Delta init: .gitconfig exists but [delta] section does not. Adding it.'
       echo -e "\n${themeDefinition}\n" >> "${deltaConfigFile}"
   fi
 }
