@@ -1,0 +1,505 @@
+#!/usr/bin/env bash
+
+######################################################################
+#
+# Lipstick on a Pig (lipstick) Installation Script.
+#
+# 1. Adds lipstick scripts to ~/.local/bin
+# 2. Adds lipstick configuration to ~/.config/lipstick
+# 3. Adds systemd unit file to ~/.config/systemd/user
+# 4. Enables systemd service and starts it.
+#
+# For more information, usage instructions, and app configurations,
+# please see: https://codeberg.org/small-tech/lipstick
+#
+# Like this? Fund us! https://small-tech.org/fund-us
+#
+# Copyright © 2022-present Aral Balkan, Small Technology Foundation
+# Released under AGPL version 3.0.
+#
+######################################################################
+
+echo "🐷 Installing Lipstick on a Pig…"
+echo ""
+
+# Embedded files: start.
+
+######################################################################
+
+read -rd '' lipstick <<-EOF
+#!/usr/bin/env bash
+
+################################################################################
+#
+# 🐷 Lipstick on a Pig
+#
+# 💄 Usage: lipstick <command>
+#
+# For list of commands, run lipstick help.
+#
+# For source code, documentation, etc., please see:
+# https://codeberg.org/small-tech/lipstick
+#
+# Copyright © 2022-present Aral Balkan, Small Technology Foundation
+# License: AGPL version 3.0.
+#
+################################################################################
+
+VERSION="1.0"
+
+# Binary and configuration path usage adheres to 
+# freedesktop.org XDG Base Directory Specification
+# https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
+BINARY_HOME="\${HOME}/.local/bin"
+
+DATA_HOME="\${XDG_DATA_HOME:-\$HOME/.local/share}"
+LIPSTICK_DATA_HOME="\${DATA_HOME}/lipstick"
+
+CONFIG_HOME="\${XDG_CONFIG_HOME:-\$HOME/.config}"
+SYSTEMD_USER_DIRECTORY="\${CONFIG_HOME}/systemd/user"
+
+RUNNING_PROGRAM_NAME="\${0}"
+
+function configure {
+  # Import list of all apps (apps), including their configuration functions.
+  source "\${LIPSTICK_DATA_HOME}/lipstick-apps"
+
+  # Find and initialise support for all supported apps installed on this system.
+  installedApps=()
+
+  for app in \${apps[@]};
+  do
+    appCommand="\${app}Command"
+    if command -v "\${!appCommand}" &> /dev/null; then
+      # App is installed.
+      echo "  • Found app: \${app} (\${!appCommand}), adding support for it"
+      installedApps+=("\${app}")
+      "\${app}Init"
+    fi
+  done
+
+  # Save the list of installed apps.
+  echo -e "#!/usr/bin/env bash\n\ninstalledApps=(\${installedApps[@]})" > "\${LIPSTICK_DATA_HOME}/installed-apps"
+}
+
+
+function monitor {
+  # When system colour scheme changes, run sync script.
+  gsettings monitor org.gnome.desktop.interface color-scheme \
+    | xargs -L1 "\${BINARY_HOME}/lipstick"
+}
+
+
+function sync {
+  # Run all colour scheme updates for configured apps based on
+  # the passed colour scheme (\$1). Possible values are “default” for light and
+  # anything else for dark.
+  
+  # Import list of all apps (apps), including their configuration functions,
+  # as well as a list of the currently installed apps (installedApps) on this system.
+  # (The latter is compiled by the lipstick-configure script run by the installer.)
+  source "\${LIPSTICK_DATA_HOME}/lipstick-apps"
+  source "\${LIPSTICK_DATA_HOME}/installed-apps"
+
+  if [[ "\${1}" == "default" ]]; then
+    colourScheme="Light"
+  else
+    colourScheme="Dark"
+  fi
+
+  # Log the current mode to aid with troubleshooting.
+  # Use journalctl --unit=lipstick.service to view the logs.
+  echo "🐷 Switching to \${colourScheme} Mode."
+
+  echo "> \${installedApps}"
+
+  # Configure apps for the current colour scheme.
+  for app in \${installedApps[@]};
+  do
+    echo "> Setting colour scheme \${colourScheme} for app \${app} (\${app}\${colourScheme})"
+    "\${app}\${colourScheme}"
+  done
+}
+
+function showSmallHeader {
+  echo "🐷 Lipstick on a Pig"
+  echo ""
+}
+
+
+function status {
+  # Show systemd service status.
+  showSmallHeader
+  systemctl status --user lipstick
+}
+
+
+function logs {
+  # Show systemd service logs.
+  showSmallHeader
+  journalctl --user --unit=lipstick --follow
+}
+
+function enableService {
+  # Enable the Lipstick monitor to start on boot, start it up immediately,
+  # and also run the sync command right away with the current colour scheme.
+  sync \`gsettings get org.gnome.desktop.interface color-scheme\`
+  systemctl --user enable lipstick.service
+  systemctl --user start lipstick.service
+}
+
+
+function disableService {
+  # Stop the Lipstick colour scheme change monitor service immediately and
+  # disable it from starting at boot.
+  systemctl --user stop lipstick.service
+  systemctl --user disable lipstick.service
+}
+
+
+function update {
+  # Update Lipstick on a Pig.
+  echo -n "🐷 Updating Lipstick on a Pig…"
+
+  if command -v wget &> /dev/null; then
+    # Update using wget.
+    wget -qO- https://codeberg.org/small-tech/lipstick/raw/branch/main/install | bash
+  else
+    # As wget does not exist, attempt to update using curl.
+    if command -v curl &> /dev/null; then
+      # Update using curl.
+      curl -s https://codeberg.org/small-tech/lipstick/raw/branch/main/install | bash
+    else
+      echo "Error: could not find wget or curl to download the update."
+      echo "Please install one of these apps and re-run lipstick-update."
+      exit 1
+    fi
+  fi
+
+  echo "💄 Done."
+}
+
+
+function uninstall {
+  # Uninstall Lipstick on a Pig.
+  echo "🐷 Uninstalling Lipstick on a Pig…"
+
+  disableService 2>&1 1>/dev/null
+
+  rm -rf "\${LIPSTICK_DATA_HOME}"
+  rm "\${CONFIG_HOME}/systemd/user/lipstick.service"
+  rm "\${BINARY_HOME}/lipstick"
+  
+  echo "💄 Done."
+}
+
+
+function showHelp {
+  echo "🐷 Lipstick on a Pig version \${VERSION}"
+  echo ""
+  echo "💄 Usage: lipstick <command>"
+  echo ""
+  echo "Commands:"
+  echo ""
+  echo "configure: update config (e.g., after installing a new app)"
+  echo "update   : update to latest version of Lipstick on a Pig."
+  echo "status   : display status of systemd service"
+  echo "logs     : display systemd service logs"
+  echo "enable   : enable and start systemd service"
+  echo "disable  : disable and stop systemd service"
+  echo "uninstall: uninstall Lipstick on a Pig."
+  echo ""
+  echo "To access source code, file an issue, etc., please see:"
+  echo "https://codeberg.org/small-tech/lipstick"
+  echo ""
+  echo "💕 Like this? Fund us!"
+  echo "   https://small-tech.org/fund-us"
+  echo ""
+  echo "Copyright 2022-present Aral Balkan, Small Technology Foundation"
+  echo "Released under AGPL version 3.0"
+}
+
+function main {
+  # Are we being called by the colour scheme change monitoring service
+  # with a sync request?
+  if [[ "\${1}" = "color-scheme:" ]]; then
+    # Called by monitoring service. Run sync and exit.
+    sync "\${2}"
+    exit
+  fi
+
+  # Parse command.
+
+  case \$1 in
+    configure     ) configure      ;;
+    monitor       ) monitor        ;;  # private; only used by systemd service.
+    status        ) status         ;;
+    logs          ) logs           ;;
+    enable        ) enableService  ;;
+    disable       ) disableService ;;
+    update        ) update         ;;
+    uninstall     ) uninstall      ;;
+    *             ) showHelp       ;;
+  esac
+}
+
+# Run main, passing in the arguments that were passed to the script.
+main \$@
+EOF
+
+######################################################################
+
+read -rd '' lipstickApps <<-EOF
+#!/usr/bin/env bash
+
+# Defines apps that Lipstick supports.
+#
+# App definition symbols use a naming convention based on the <appName>:
+#
+# apps+=(<appName>)  # Adds <appName> to list of supported apps
+# <appName>Command   # (string) the name of the app binary used to check if app exists
+# <appName>Init      # (function) carries out any one-time initialisation that might
+#                    #   be necessary (e.g., ensuring app configuration file exists).
+# <appName>Light     # (function) run to switch app to its light mode/theme.
+# <appName>Dark      # (function) run to switch app to its dark mode/theme.
+#
+# Remember that the various functions above will be called in different processes
+# so do not update global variables from within them and expect other functions for
+# your app to read that value. e.g., when getting config paths from the app itself
+# (see bat app for an example of this), repeat the command in each of your functions
+# that needs access to that path.
+
+# Use CONFIG_HOME as the configuration directory in app definitions.
+# Adheres to freedesktop.org XDG Base Directory Specification
+# https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
+CONFIG_HOME="\${XDG_CONFIG_HOME:-\$HOME/.config}"
+
+apps=()
+
+
+################################################################################
+#
+# Helix Editor.
+#
+################################################################################
+
+helixEditorCommand="hx"
+helixConfigurationDirectory="\${CONFIG_HOME}/helix"
+helixConfigurationFile="\${helixConfigurationDirectory}/config.toml"
+
+function helixEditorInit {
+  # Ensure configuration exists.
+  mkdir -p "\${helixConfigurationDirectory}"
+  if ! test -f "\${helixConfigurationFile}"; then
+    echo 'theme = "default"' > "\${helixConfigurationFile}"
+  fi
+}
+
+function helixEditorLight {
+  sed -i 's/theme = ".*"/theme = "onelight"/' "\${CONFIG_HOME}/helix/config.toml"
+}
+
+function helixEditorDark {
+  sed -i 's/theme = ".*"/theme = "dracula"/' "\${CONFIG_HOME}/helix/config.toml"
+}
+
+apps+=("helixEditor")
+
+
+################################################################################
+#
+# Bat
+#
+################################################################################
+
+batCommand="bat"
+
+function batInit {
+  # Ensure configuration exists.
+  configDirectory=\`bat --config-dir\`
+  configFile=\`bat --config-file\`
+
+  if [[ ! -f "\${configFile}" ]]; then
+    mkdir -p "\${configDirectory}"
+    echo -e "--theme=\"\"\n" > "\${configFile}"
+  fi
+}
+
+function batLight {
+  configFile=\`bat --config-file\`
+  sed -i 's/theme=".*"/theme="Monokai Extended Light"/' "\${configFile}"
+}
+
+function batDark {
+  configFile=\`bat --config-file\`
+  sed -i 's/theme=".*"/theme="Dracula"/' "\${configFile}"
+}
+
+apps+=("\${batCommand}")
+
+################################################################################
+#
+# Batcat (on Debian and Ubuntu, the bat binary is called batcat).
+#
+################################################################################
+
+batcatCommand="batcat"
+
+function batcatInit {
+  # Ensure configuration exists.
+  configDirectory=\`batcat --config-dir\`
+  configFile=\`batcat --config-file\`
+
+  if [[ ! -f "\${configFile}" ]]; then
+    mkdir -p "\${configDirectory}"
+    echo -e "--theme=\"\"\n" > "\${configFile}"
+  fi
+}
+
+function batcatLight {
+  configFile=\`batcat --config-file\`
+  sed -i 's/theme=".*"/theme="Monokai Extended Light"/' "\${configFile}"
+}
+
+function batcatDark {
+  configFile=\`batcat --config-file\`
+  sed -i 's/theme=".*"/theme="Dracula"/' "\${configFile}"
+}
+
+apps+=("\${batcatCommand}")
+
+################################################################################
+#
+# Delta
+#
+# Note: Delta does not have its own configuration file but rather uses Git’s
+# ~/.gitconfig file. Updating this makes me more nervous than would a separate
+# file for Delta but c’est la vie for now.
+#
+# For more information, see:
+# https://github.com/dandavison/delta/issues/19
+#
+################################################################################
+
+deltaCommand="delta"
+
+deltaConfigFile="\${HOME}/.gitconfig"
+
+function deltaInit {
+  # This is where we try to be as safe as possible so as not to mess up
+  # the person’s git configuration.
+
+  themeDefinition="[delta]\n\tsyntax-theme = Dracula"
+
+  # If a .gitconfig file doesn’t exist, create one and add a
+  # Delta section with a default theme.
+  if [[ ! -f "\${deltaConfigFile}" ]]; then
+    echo -e "\${themeDefinition}" > "\${deltaConfigFile}"
+    exit
+  fi
+  
+  # Git config exists, check if there is already a syntax-theme setting.
+  if grep -q "\[delta\]" ~/.gitconfig; then
+    if grep -q "syntax-theme =" ~/.gitconfig; then
+      # All good, everything we need exists.
+      true
+    else
+      # Add just the syntax-theme section.
+      sed -i "s/\[delta\]/\${themeDefinition}/" "\${deltaConfigFile}"
+    fi
+  else
+      # [delta] section does not exist. Add it.
+      echo -e "\n\${themeDefinition}\n" >> "\${deltaConfigFile}"
+  fi
+}
+
+function deltaLight {
+  sed -i 's/syntax-theme = .*\$/syntax-theme = Monokai Extended Light/' "\${deltaConfigFile}"
+}
+
+function deltaDark {
+  sed -i 's/syntax-theme = .*\$/syntax-theme = Dracula/' "\${deltaConfigFile}"
+}
+
+apps+=("\${deltaCommand}")
+EOF
+
+######################################################################
+
+read -rd '' lipstickService <<-EOF
+[Unit]
+Description=Lipstick on a Pig
+Documentation=https://codeberg.org/small-tech/lipstick/src/README.md
+
+[Service]
+Type=simple
+RestartSec=5
+Restart=always
+ExecStart=%h/.local/bin/lipstick monitor
+
+[Install]
+WantedBy=default.target
+EOF
+
+######################################################################
+
+# Embedded files: end.
+
+# Binary and configuration path usage adheres to 
+# freedesktop.org XDG Base Directory Specification
+# https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
+
+BINARY_HOME="${HOME}/.local/bin"
+
+DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+LIPSTICK_DATA_HOME="${DATA_HOME}/lipstick"
+
+CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+SYSTEMD_USER_DIRECTORY="${CONFIG_HOME}/systemd/user"
+
+# Writes string contents ($1) to file ($2).
+function writeFile { echo "${1}" > "${2}"; }
+
+# Writes string contents ($1) to file ($2) and makes it executable.
+function writeScript { writeFile "${1}" "${2}"; chmod +x "${2}"; }
+
+echo "  • Ensuring directories exist"
+
+mkdir -p "${BINARY_HOME}"
+mkdir -p "${LIPSTICK_DATA_HOME}"
+mkdir -p "${SYSTEMD_USER_DIRECTORY}"
+
+echo "  • Writing script files and making them executable"
+
+writeScript "${lipstick}" "${BINARY_HOME}/lipstick"
+writeScript "${lipstickApps}" "${LIPSTICK_DATA_HOME}/lipstick-apps"
+
+echo "  • Writing systemd unit file"
+
+writeFile "${lipstickService}" "${SYSTEMD_USER_DIRECTORY}/lipstick.service"
+
+echo "  • Configuring Lipstick for supported apps on your system"
+
+lipstick configure
+
+echo "  • Enabling lipstick service and starting it"
+
+# Run enable command, hiding regular output but showing errors.
+lipstick enable 2>&1 1>/dev/null
+
+echo ""
+echo "💄 Done."
+
+# To end, display usage instructions.
+echo ""
+echo "For usage instructions, run:"
+echo "lipstick help"
+echo ""
+echo "To access source code, file an issue, etc., please see:"
+echo "https://codeberg.org/small-tech/lipstick"
+echo ""
+echo "💕 Like this? Fund us!"
+echo "   https://small-tech.org/fund-us"
+echo ""
+echo "Copyright 2022-present Aral Balkan, Small Technology Foundation"
+echo "Released under AGPL version 3.0"
