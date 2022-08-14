@@ -23,7 +23,7 @@ function insertEscaped {
   # making sure we escape dollar signs so as not
   # to have the code altered when the install script
   # runs.
-  cat "${1}" | sed s/\\$/\\\\$/g >> "${INSTALL}"
+  cat "${1}" | sed s/\\$/\\\\$/g | sed 's/`/\\`/g' >> "${INSTALL}"
 }
 
 function embed {
