@@ -57,7 +57,7 @@ function configure {
 function monitor {
   # When system colour scheme changes, run sync script.
   gsettings monitor org.gnome.desktop.interface color-scheme \
-    | xargs -L1 bash -c "source ${BINARY_HOME}/lipstick"
+    | xargs -L1 "${BINARY_HOME}/lipstick"
 }
 
 
@@ -147,23 +147,21 @@ function update {
     fi
   fi
 
-  echo " 💄 Done."
+  echo "💄 Done."
 }
 
 
 function uninstall {
   # Uninstall Lipstick on a Pig.
-  set -e
+  echo "🐷 Uninstalling Lipstick on a Pig…"
 
-  echo -n "🐷 Uninstalling Lipstick on a Pig…"
-
-  disableService &> /dev/null
+  disableService 2>&1 1>/dev/null
 
   rm -rf "${LIPSTICK_DATA_HOME}"
   rm "${CONFIG_HOME}/systemd/user/lipstick.service"
   rm "${BINARY_HOME}/lipstick"
   
-  echo " 💄 Done."
+  echo "💄 Done."
 }
 
 
@@ -193,14 +191,11 @@ function showHelp {
 }
 
 function main {
-  # If we’re being sourced instead of being launched from the command-line
-  # the running program name ($0) will not include our script name.
-  # This is how we know it’s the systemd service calling us and that 
-  # we should run the sync function.
-
-  if [[ ! "${RUNNING_PROGRAM_NAME}" =~ .*lipstick$ ]]; then
-    # Called by systemd service. Run sync and exit.
-    sync "${1}"
+  # Are we being called by the colour scheme change monitoring service
+  # with a sync request?
+  if [[ "${1}" = "color-scheme:" ]]; then
+    # Called by monitoring service. Run sync and exit.
+    sync "${2}"
     exit
   fi
 
