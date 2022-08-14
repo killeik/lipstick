@@ -83,7 +83,7 @@ function batDark {
   sed -i 's/theme=".*"/theme="Dracula"/' "${configFile}"
 }
 
-apps+=("bat")
+apps+=("${batCommand}")
 
 ################################################################################
 #
@@ -114,7 +114,7 @@ function batcatDark {
   sed -i 's/theme=".*"/theme="Dracula"/' "${configFile}"
 }
 
-apps+=("batcat")
+apps+=("${batcatCommand}")
 
 ################################################################################
 #
@@ -171,3 +171,5 @@ function deltaLight {
 function deltaDark {
   sed -i 's/syntax-theme = .*$/syntax-theme = Dracula/' "${deltaConfigFile}"
 }
+
+apps+=("${deltaCommand}")
