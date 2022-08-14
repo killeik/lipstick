@@ -20,20 +20,20 @@ Got an app you use that isn’t supported? Why not add it to the [lipstick-apps]
 
 ## Install
 
-😇 [Download and run this installation script.](https://codeberg.org/small-tech/lipstick/raw/branch/main/install) 
+😇 [Download and run this installation script.](https://codeberg.org/small-tech/lipstick/raw/branch/main/dist/install) 
 
 😈 Or, if you enjoy living dangerously, pipe it from here to your shell (ooh, naughty!)
 
 __Using wget:__
 
 ```shell
-wget -qO- https://codeberg.org/small-tech/lipstick/raw/branch/main/install | bash
+wget -qO- https://codeberg.org/small-tech/lipstick/raw/branch/main/dist/install | bash
 ```
 
 __Using curl:__
 
 ```shell
-curl -s https://codeberg.org/small-tech/lipstick/raw/branch/main/install | bash
+curl -s https://codeberg.org/small-tech/lipstick/raw/branch/main/dist/install | bash
 ```
 
 Lipstick will automatically find [supported apps](#supported-apps) on your system and configure itself. You shouldn’t have to do anything else.
