@@ -1,7 +1,5 @@
 # 🐷 Lipstick on a Pig
 
-## 🚧 Work in progress, please do not use yet.
-
 Lipstick makes command-line apps follow your light/dark mode settings.
 
 [Learn more.](https://ar.al/2022/08/03/the-most-important-lesson-in-design/)
@@ -14,9 +12,11 @@ Lipstick makes command-line apps follow your light/dark mode settings.
 
 ## Supported apps
 
-- [Bat]()
-- [Delta]()
-- [Helix]()
+- [Bat](https://github.com/sharkdp/bat#readme)
+- [Delta](https://github.com/dandavison/delta#readme)
+- [Helix](https://helix-editor.com)
+
+Got an app you use that isn’t supported? Why not add it to the [lipstick-apps](scripts/lipstick-apps) file and submit a pull request?
 
 ## Install
 
@@ -36,7 +36,7 @@ __Using curl:__
 curl -s https://codeberg.org/small-tech/lipstick/raw/branch/main/install | bash
 ```
 
-Lipstick will automatically find supported apps on your system and configure itself. You shouldn’t have to do anything else.
+Lipstick will automatically find [supported apps](#supported-apps) on your system and configure itself. You shouldn’t have to do anything else.
 
 ## Notes
 
@@ -49,10 +49,6 @@ There seems to be a bug with `systemd --user` services where they cannot find sy
 For the time being, for Lipstick to work properly with all apps (e.g. bat, where we use bat itself –  `bat --config-file`, etc. – to find configuration paths) you must install it from the host system.
 
 I’m going to open an issue about this in the relevant repository once I have a simpler reproduction.
-
-## Contribute
-
-To contribute app settings for other apps, please edit the [lipstick-apps](scripts/lipstick-apps) file and submit a pull request.
 
 ## Like this? Fund us!
 
