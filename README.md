@@ -16,7 +16,7 @@ Lipstick makes command-line apps follow your light/dark mode settings.
 - [Delta](https://github.com/dandavison/delta#readme)
 - [Helix](https://helix-editor.com)
 
-Got an app you use that isn’t supported? Why not add it to the [lipstick-apps](scripts/lipstick-apps) file and submit a pull request?
+Got an app you use that isn’t supported? Why not add it to the [lipstick-apps](src/lipstick-apps) file and submit a pull request?
 
 ## Install
 
