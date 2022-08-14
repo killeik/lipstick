@@ -137,7 +137,7 @@ function deltaInit {
   # This is where we try to be as safe as possible so as not to mess up
   # the person’s git configuration.
 
-  themeDefiniton="[delta]\n\tsyntax-theme = Dracula"
+  themeDefinition="[delta]\n\tsyntax-theme = Dracula"
 
   # If a .gitconfig file doesn’t exist, create one and add a
   # Delta section with a default theme.
@@ -148,7 +148,7 @@ function deltaInit {
   fi
   
   # Git config exists, check if there is already a syntax-theme setting.
-  if grep -q "[delta]" ~/.gitconfig; then
+  if grep -q "\[delta\]" ~/.gitconfig; then
     if grep -q "syntax-theme =" ~/.gitconfig; then
       # All good, everything we need exists.
       echo 'Delta init: All good; no need to configure. Exiting.'
