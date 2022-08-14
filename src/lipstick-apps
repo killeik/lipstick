@@ -120,21 +120,54 @@ apps+=("batcat")
 #
 # Delta
 #
+# Note: Delta does not have its own configuration file but rather uses Git’s
+# ~/.gitconfig file. Updating this makes me more nervous than would a separate
+# file for Delta but c’est la vie for now.
+#
+# For more information, see:
+# https://github.com/dandavison/delta/issues/19
+#
 ################################################################################
 
 deltaCommand="delta"
 
+deltaConfigFile="${HOME}/.gitconfig"
+
 function deltaInit {
-  # TODO
-  true
+  # This is where we try to be as safe as possible so as not to mess up
+  # the person’s git configuration.
+
+  themeDefiniton="[delta]\n\tsyntax-theme = Dracula"
+
+  # If a .gitconfig file doesn’t exist, create one and add a
+  # Delta section with a default theme.
+  if [[ ! -f "${deltaConfigFile}" ]]; then
+    echo 'Delta init: .gitconfig does not exist. Creating.'
+    echo -e "${themeDefinition}" > "${deltaConfigFile}"
+    exit
+  fi
+  
+  # Git config exists, check if there is already a syntax-theme setting.
+  if grep -q "[delta]" ~/.gitconfig; then
+    if grep -q "syntax-theme =" ~/.gitconfig; then
+      # All good, everything we need exists.
+      echo 'Delta init: All good; no need to configure. Exiting.'
+    else
+      # Add just the syntax-theme section.
+      echo "Delta init: .gitconfig and [delta] section exist but syntax-theme is not declared."
+      sed -i "s/\[delta\]/${themeDefinition}" "${deltaConfigFile}"
+    fi
+  else
+      # [delta] section does not exist. Add it.
+      echo 'Delta init: .gitconfig exists but [delta] section does not. Adding it.'
+      echo -e "\n${themeDefinition}\n" >> "${deltaConfigFile}"
+  fi
 }
 
 function deltaLight {
-  # TODO
-  true
+  sed -i 's/syntax-theme = .*$/syntax-theme = Monokai Extended Light/' "${deltaConfigFile}"
 }
 
 function deltaDark {
-  # TODO
-  true
+  sed -i 's/syntax-theme = .*$/syntax-theme = Dracula/' "${deltaConfigFile}"
 }
