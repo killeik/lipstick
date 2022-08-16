@@ -72,7 +72,11 @@ function sync {
   source "${LIPSTICK_DATA_HOME}/lipstick-apps"
   source "${LIPSTICK_DATA_HOME}/installed-apps"
 
-  if [[ "${1}" == "default" ]]; then
+  # Note: when called with the output of gsettings monitor, default and prefer-dark
+  # are returned while when called with the output of gsettings get, you get
+  # 'default' and 'prefer-dark' (with single quotes). So we remove the single quotes
+  # here if they exist before checking.
+  if [[ "${1//\'/}" = "default" ]]; then
     colourScheme="Light"
   else
     colourScheme="Dark"
@@ -82,12 +86,10 @@ function sync {
   # Use journalctl --unit=lipstick.service to view the logs.
   echo "🐷 Switching to ${colourScheme} Mode."
 
-  echo "> ${installedApps}"
-
   # Configure apps for the current colour scheme.
   for app in ${installedApps[@]};
   do
-    echo "> Setting colour scheme ${colourScheme} for app ${app} (${app}${colourScheme})"
+    echo "💄 Setting colour scheme ${colourScheme} for app ${app} (${app}${colourScheme})"
     "${app}${colourScheme}"
   done
 }
@@ -204,6 +206,7 @@ function main {
   case $1 in
     configure     ) configure      ;;
     monitor       ) monitor        ;;  # private; only used by systemd service.
+    sync          ) sync "${2}"    ;;  # private; only used by systemd service.
     status        ) status         ;;
     logs          ) logs           ;;
     enable        ) enableService  ;;
