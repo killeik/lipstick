@@ -20,9 +20,13 @@ Got an app you use that isn’t supported? Why not add it to the [lipstick-apps]
 
 ## Install
 
+Here are three ways you can install Lipstick on a Pig:
+
 😇 [Download and run this installation script.](https://codeberg.org/small-tech/lipstick/raw/branch/main/dist/install) 
 
-😈 Or, if you enjoy living dangerously, pipe it from here to your shell (ooh, naughty!)
+🤓 Clone this repository and run the `./install` script.
+
+😈 Or, if you enjoy living dangerously, copy and paste one of the following into your terminal (ooh, naughty!)
 
 __Using wget:__
 
