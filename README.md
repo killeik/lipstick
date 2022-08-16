@@ -2,7 +2,7 @@
 
 Lipstick makes command-line apps follow your light/dark mode settings.
 
-[Learn more.](https://ar.al/2022/08/03/the-most-important-lesson-in-design/)
+[Learn more.](https://ar.al/2022/08/16/the-most-important-lesson-in-design/)
 
 ## System requirements
 
