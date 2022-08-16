@@ -26,7 +26,7 @@ Here are three ways you can install Lipstick on a Pig:
 
 🤓 Clone this repository and run the `./install` script.
 
-😈 Or, if you enjoy living dangerously, copy and paste one of the following into your terminal (ooh, naughty!)
+😈 Or, if you enjoy living dangerously, copy and paste one of the following commands into your terminal (ooh, naughty!)
 
 __Using wget:__
 
