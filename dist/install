@@ -119,7 +119,7 @@ function sync {
   for app in \${installedApps[@]};
   do
     appCommand="\${app}Command"
-    echo "💄 Setting \${colourScheme.toLowerCase()} colour scheme for \${app} (\${appCommand})"
+    echo "💄 Setting \${colourScheme,,} colour scheme for \${app} (\${!appCommand})"
     "\${app}\${colourScheme}"
   done
 }
