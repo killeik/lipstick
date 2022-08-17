@@ -2,7 +2,7 @@
 
 Lipstick makes command-line apps follow your light/dark mode settings.
 
-[Learn more.](https://ar.al/2022/08/16/the-most-important-lesson-in-design/)
+[Learn more.](https://ar.al/2022/08/17/the-most-important-lesson-in-design/)
 
 ## System requirements
 
@@ -44,15 +44,15 @@ Lipstick will automatically find [supported apps](#supported-apps) on your syste
 
 ## Notes
 
+### Refreshing running apps
+
 Some apps (e.g., [Helix Editor](https://helix-editor.com)), may [need to be restarted](https://github.com/helix-editor/helix/issues/2158#issuecomment-1201083242) for the changes to take effect.
 
-## Fedora Silverblue with toolbox/Distrobox (Podman containers)
+### Fedora Silverblue
 
-There seems to be a bug with `systemd --user` services where they cannot find system binaries. I haven’t created a simple reproduction of this yet (although you can see it by running Lipstick from host and from within the default toolbox container – `toolbox enter`).
+Please either install Lipstick from the host system or from a [toolbox](https://docs.fedoraproject.org/en-US/fedora-silverblue/toolbox/) container.
 
-For the time being, for Lipstick to work properly with all apps (e.g. bat, where we use bat itself –  `bat --config-file`, etc. – to find configuration paths) you must install it from the host system.
-
-I’m going to open an issue about this in the relevant repository once I have a simpler reproduction.
+(Distrobox currently doesn’t work with systemd `--user` services in either [initful](https://github.com/89luca89/distrobox/issues/380) or [initless](https://github.com/89luca89/distrobox/issues/379#issuecomment-1217864773) containers and the installer will fail under a Distrobox container.)
 
 ## Like this? Fund us!
 
