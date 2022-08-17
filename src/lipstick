@@ -89,7 +89,8 @@ function sync {
   # Configure apps for the current colour scheme.
   for app in ${installedApps[@]};
   do
-    echo "💄 Setting colour scheme ${colourScheme} for app ${app} (${app}${colourScheme})"
+    appCommand="${app}Command"
+    echo "💄 Setting ${colourScheme.toLowerCase()} colour scheme for ${app} (${appCommand})"
     "${app}${colourScheme}"
   done
 }
@@ -134,14 +135,16 @@ function update {
   # Update Lipstick on a Pig.
   echo -n "🐷 Updating Lipstick on a Pig…"
 
+  uninstall 2>&1 1>/dev/null
+
   if command -v wget &> /dev/null; then
     # Update using wget.
-    wget -qO- https://codeberg.org/small-tech/lipstick/raw/branch/main/install | bash
+    wget -qO- https://codeberg.org/small-tech/lipstick/raw/branch/main/dist/install | bash
   else
     # As wget does not exist, attempt to update using curl.
     if command -v curl &> /dev/null; then
       # Update using curl.
-      curl -s https://codeberg.org/small-tech/lipstick/raw/branch/main/install | bash
+      curl -s https://codeberg.org/small-tech/lipstick/raw/branch/main/dist/install | bash
     else
       echo "Error: could not find wget or curl to download the update."
       echo "Please install one of these apps and re-run lipstick-update."
