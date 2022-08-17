@@ -105,7 +105,7 @@ function showSmallHeader {
 function status {
   # Show systemd service status.
   showSmallHeader
-  systemctl status --user lipstick
+  systemctl status --user --no-pager lipstick
 }
 
 
@@ -119,16 +119,16 @@ function enableService {
   # Enable the Lipstick monitor to start on boot, start it up immediately,
   # and also run the sync command right away with the current colour scheme.
   sync `gsettings get org.gnome.desktop.interface color-scheme`
-  systemctl --user enable lipstick.service
-  systemctl --user start lipstick.service
+  systemctl --user enable lipstick.service 2>&1 1>/dev/null
+  systemctl --user start lipstick.service 2>&1 1>/dev/null
 }
 
 
 function disableService {
   # Stop the Lipstick colour scheme change monitor service immediately and
   # disable it from starting at boot.
-  systemctl --user stop lipstick.service
-  systemctl --user disable lipstick.service
+  systemctl --user stop lipstick.service 2>&1 1>/dev/null
+  systemctl --user disable lipstick.service 2>&1 1>/dev/null
 }
 
 
