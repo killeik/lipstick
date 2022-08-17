@@ -133,18 +133,18 @@ function disableService {
 
 function update {
   # Update Lipstick on a Pig.
-  echo -n "🐷 Updating Lipstick on a Pig…"
+  echo -e "🐷 Updating Lipstick on a Pig…"
 
   uninstall 2>&1 1>/dev/null
 
   if command -v wget &> /dev/null; then
     # Update using wget.
-    wget -qO- https://codeberg.org/small-tech/lipstick/raw/branch/main/dist/install | bash
+    wget -qO- https://codeberg.org/small-tech/lipstick/raw/branch/main/dist/install | bash 2>&1 1>/dev/null
   else
     # As wget does not exist, attempt to update using curl.
     if command -v curl &> /dev/null; then
       # Update using curl.
-      curl -s https://codeberg.org/small-tech/lipstick/raw/branch/main/dist/install | bash
+      curl -s https://codeberg.org/small-tech/lipstick/raw/branch/main/dist/install | bash 2>&1 1>/dev/null
     else
       echo "Error: could not find wget or curl to download the update."
       echo "Please install one of these apps and re-run lipstick-update."
