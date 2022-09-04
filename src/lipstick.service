@@ -6,6 +6,7 @@ Documentation=https://codeberg.org/small-tech/lipstick/src/README.md
 Type=simple
 RestartSec=5
 Restart=always
+Environment="PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:%h/.local/bin:%h/.cargo/bin:%h/go/bin"
 ExecStart=%h/.local/bin/lipstick monitor
 
 [Install]
