@@ -50,7 +50,7 @@ Lipstick will automatically find [supported apps](#supported-apps) on your syste
 
 Some apps may need to be restarted for the changes to take effect.
 
-Whenever possible, Lipstick should attempt to singal to the app that its configuration has changed and that it should reload itself. This is what it does for Helix Editor, for example.
+Whenever possible, Lipstick should attempt to signal to the app that its configuration has changed so it can reload it. This is what it does for Helix Editor, for example.
 
 ### Fedora Silverblue
 
