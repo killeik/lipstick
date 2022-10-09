@@ -48,7 +48,9 @@ Lipstick will automatically find [supported apps](#supported-apps) on your syste
 
 ### Refreshing running apps
 
-Some apps (e.g., [Helix Editor](https://helix-editor.com)), may [need to be restarted](https://github.com/helix-editor/helix/issues/2158#issuecomment-1201083242) for the changes to take effect.
+Some apps may need to be restarted for the changes to take effect.
+
+Whenever possible, Lipstick should attempt to singal to the app that its configuration has changed and that it should reload itself. This is what it does for Helix Editor, for example.
 
 ### Fedora Silverblue
 

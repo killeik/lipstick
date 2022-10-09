@@ -45,10 +45,12 @@ function helixEditorInit {
 
 function helixEditorLight {
   sed -i 's/theme = ".*"/theme = "onelight"/' "${CONFIG_HOME}/helix/config.toml"
+  pkill -USR1 hx
 }
 
 function helixEditorDark {
   sed -i 's/theme = ".*"/theme = "dracula"/' "${CONFIG_HOME}/helix/config.toml"
+  pkill -USR1 hx
 }
 
 apps+=("helixEditor")
