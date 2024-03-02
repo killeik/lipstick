@@ -13,6 +13,7 @@ Lipstick makes command-line apps follow your light/dark mode settings.
 ## Supported apps
 
 - [Bat](https://github.com/sharkdp/bat#readme)
+- [Btop](https://github.com/aristocratos/btop)
 - [Delta](https://github.com/dandavison/delta#readme)
 - [Helix](https://helix-editor.com)
 
