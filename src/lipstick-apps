@@ -172,3 +172,34 @@ function deltaDark {
 }
 
 apps+=("${deltaCommand}")
+
+################################################################################
+#
+# btop process monitor
+#
+################################################################################
+
+btopCommand="btop"
+btopConfigurationDirectory="${CONFIG_HOME}/btop"
+btopConfigurationFile="${btopConfigurationDirectory}/btop.conf"
+
+function btopInit {
+  # Ensure configuration exists.
+  mkdir -p "${btopConfigurationDirectory}"
+  if ! test -f "${btopConfigurationFile}"; then
+    echo 'color_theme = "default"' > "${btopConfigurationFile}"
+  fi
+}
+
+function btopLight {
+  sed -i 's/color_theme = ".*"/color_theme = "solarized_light"/' "${btopConfigurationFile}"
+  pkill -USR2 btop
+}
+
+function btopDark {
+  sed -i 's/color_theme = ".*"/color_theme = "solarized_dark"/' "${btopConfigurationFile}"
+  pkill -USR2 btop
+}
+
+apps+=("${btopCommand}")
+
