@@ -67,7 +67,7 @@ function configure {
   # Find and initialise support for all supported apps installed on this system.
   installedApps=()
 
-  for app in \${apps[@]};
+  for app in "\${apps[@]}";
   do
     appCommand="\${app}Command"
     if command -v "\${!appCommand}" &> /dev/null; then
@@ -79,7 +79,7 @@ function configure {
   done
 
   # Save the list of installed apps.
-  echo -e "#!/usr/bin/env bash\n\ninstalledApps=(\${installedApps[@]})" > "\${LIPSTICK_DATA_HOME}/installed-apps"
+  printf "#!/usr/bin/env bash\n\ninstalledApps=(%s" "\${installedApps[@]}" ")" > "\${LIPSTICK_DATA_HOME}/installed-apps"
 }
 
 
@@ -116,7 +116,7 @@ function sync {
   echo "🐷 Switching to \${colourScheme} Mode."
 
   # Configure apps for the current colour scheme.
-  for app in \${installedApps[@]};
+  for app in "\${installedApps[@]}";
   do
     appCommand="\${app}Command"
     echo "💄 Setting \${colourScheme,,} colour scheme for \${app} (\${!appCommand})"
@@ -147,17 +147,17 @@ function logs {
 function enableService {
   # Enable the Lipstick monitor to start on boot, start it up immediately,
   # and also run the sync command right away with the current colour scheme.
-  sync \`gsettings get org.gnome.desktop.interface color-scheme\`
-  systemctl --user enable lipstick.service 2>&1 1>/dev/null
-  systemctl --user start lipstick.service 2>&1 1>/dev/null
+  sync "\$(gsettings get org.gnome.desktop.interface color-scheme)"
+  systemctl --user enable lipstick.service > /dev/null 2>&1
+  systemctl --user start lipstick.service > /dev/null 2>&1
 }
 
 
 function disableService {
   # Stop the Lipstick colour scheme change monitor service immediately and
   # disable it from starting at boot.
-  systemctl --user stop lipstick.service 2>&1 1>/dev/null
-  systemctl --user disable lipstick.service 2>&1 1>/dev/null
+  systemctl --user stop lipstick.service > /dev/null 2>&1
+  systemctl --user disable lipstick.service > /dev/null 2>&1
 }
 
 
@@ -165,16 +165,16 @@ function update {
   # Update Lipstick on a Pig.
   echo -e "🐷 Updating Lipstick on a Pig…"
 
-  uninstall 2>&1 1>/dev/null
+  uninstall > /dev/null 2>&1
 
   if command -v wget &> /dev/null; then
     # Update using wget.
-    wget -qO- https://raw.githubusercontent.com/killeik/lipstick/refs/heads/main/dist/install| bash 2>&1 1>/dev/null
+    wget -qO- https://raw.githubusercontent.com/killeik/lipstick/refs/heads/main/dist/install| bash > /dev/null 2>&1
   else
     # As wget does not exist, attempt to update using curl.
     if command -v curl &> /dev/null; then
       # Update using curl.
-      curl -s https://raw.githubusercontent.com/killeik/lipstick/refs/heads/main/dist/install | bash 2>&1 1>/dev/null
+      curl -s https://raw.githubusercontent.com/killeik/lipstick/refs/heads/main/dist/install | bash > /dev/null 2>&1
     else
       echo "Error: could not find wget or curl to download the update."
       echo "Please install one of these apps and re-run lipstick-update."
@@ -190,7 +190,7 @@ function uninstall {
   # Uninstall Lipstick on a Pig.
   echo "🐷 Uninstalling Lipstick on a Pig…"
 
-  disableService 2>&1 1>/dev/null
+  disableService > /dev/null 2>&1
 
   rm -rf "\${LIPSTICK_DATA_HOME}"
   rm "\${CONFIG_HOME}/systemd/user/lipstick.service"
@@ -251,7 +251,7 @@ function main {
 }
 
 # Run main, passing in the arguments that were passed to the script.
-main \$@
+main "\$@"
 EOF
 
 ######################################################################
