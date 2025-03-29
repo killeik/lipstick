@@ -337,7 +337,7 @@ fi
 
 helixConfigurationDirectory="\${CONFIG_HOME}/helix"
 helixConfigurationFile="\${helixConfigurationDirectory}/config.toml"
-helixThemePattern='s/theme=".*"/theme="@new_theme@"/'
+helixThemePattern='s/theme = ".*"/theme = "@new_theme@"/'
 
 function helixInit {
   # Ensure configuration exists.
