@@ -22,6 +22,44 @@
 # https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
 CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 
+LIPSTICK_CONF="${CONFIG_HOME}/lipstick/lipstick.conf"
+
+# safe bash script config file loading from
+# https://unix.stackexchange.com/questions/175648/use-config-file-for-my-shell-script
+typeset -A config
+config=(
+  [batcat_dark_theme]="Dracula"
+  [batcat_light_theme]="Monokai Extended Light"
+  [bat_dark_theme]="Dracula"
+  [bat_light_theme]="Monokai Extended Light"
+  [btop_dark_theme]="dracula"
+  [btop_light_theme]="adapta"
+  [delta_dark_theme]="Dracula"
+  [delta_light_theme]="Monokai Extended Light"
+  [helix_dark_theme]="dracula"
+  [helix_light_theme]="onelight"
+)
+
+# Lipstick theme override configuration file is optional
+# Format should be:
+# <app_name>_light_theme=my_light_theme_name
+# <app_name>_dark_theme=my_dark_theme_name
+if [ -f "${LIPSTICK_CONF}" ]; then
+  while read line
+  do
+      if [[ "$line" == *"="* ]]; then
+        var_name="${line%%=*}"
+        var_value="${line#*=}"
+        config["${var_name}"]="${var_value}"
+      fi
+  done < "${LIPSTICK_CONF}"
+
+function generateThemePattern {
+  #$1 - is theme pattern, $2 - is new theme name
+  pattern=$("echo $1" |sed "s/@new_theme@/$2" )
+  return $pattern
+}
+
 apps=()
 
 
@@ -31,16 +69,17 @@ apps=()
 #
 ################################################################################
 
-helixEditorCommand="hx"
+helixCommand="hx"
 
 if command -v helix &>/dev/null; then
-  helixEditorCommand="helix"
+  helixCommand="helix"
 fi
 
 helixConfigurationDirectory="${CONFIG_HOME}/helix"
 helixConfigurationFile="${helixConfigurationDirectory}/config.toml"
+helixThemePattern='s/theme=".*"/theme="@new_theme@"/'
 
-function helixEditorInit {
+function helixInit {
   # Ensure configuration exists.
   mkdir -p "${helixConfigurationDirectory}"
   if ! test -f "${helixConfigurationFile}"; then
@@ -48,17 +87,19 @@ function helixEditorInit {
   fi
 }
 
-function helixEditorLight {
-  sed -i 's/theme = ".*"/theme = "onelight"/' "${CONFIG_HOME}/helix/config.toml"
-  pkill -USR1 ${helixEditorCommand}
+function helixLight {
+  pattern=$(generateThemePattern "$helixThemePattern" "${config[helix_light_theme]}" )
+  sed -i "${pattern}" "${helixConfigurationFile}"
+  pkill -USR1 ${helixCommand}
 }
 
-function helixEditorDark {
-  sed -i 's/theme = ".*"/theme = "dracula"/' "${CONFIG_HOME}/helix/config.toml"
-  pkill -USR1 ${helixEditorCommand}
+function helixDark {
+  pattern=$(generateThemePattern "$helixThemePattern" "${config[helix_dark_theme]}" )
+  sed -i "${pattern}" "${helixConfigurationFile}"
+  pkill -USR1 ${helixCommand}
 }
 
-apps+=("helixEditor")
+apps+=("helix")
 
 
 ################################################################################
@@ -66,35 +107,42 @@ apps+=("helixEditor")
 # Bat
 #
 ################################################################################
-
 batCommand="bat"
 
 if command -v batcat &>/dev/null; then
   batCommand="batcat"
 fi
 
+batThemePattern='s/theme=".*"/theme="@new_theme@"/'
+
+# systemd unit won't be able to find `bat` command if it is in a toolbox container
+# like in Fedora Silverblue, so assume default config directory and file.
+if command -v ${batCommand} 2&> /dev/null; then
+  batConfigDirectory=`${batCommand} --config-dir`
+  batConfigFile=`${batCommand} --config-file`
+else
+  batConfigFile="${BAT_CONFIG_PATH:-${CONFIG_HOME}/bat/config}"
+  batConfigDirectory="$(dirname "${batConfigFile}")"
+fi
+
 function batInit {
   # Ensure configuration exists.
-  configDirectory=`${batCommand} --config-dir`
-  configFile=`${batCommand} --config-file`
-
-  if [[ ! -f "${configFile}" ]]; then
-    mkdir -p "${configDirectory}"
-    echo -e "--theme=\"\"\n" > "${configFile}"
-  fi
+  if [[ ! -f "\${batConfigFile}" ]]; then
+    mkdir -p "\${batConfigDirectory}"
+    echo -e "--theme=\"\"\n" > "\${batConfigFile}"
 }
 
 function batLight {
-  configFile=`${batCommand} --config-file`
-  sed -i 's/theme=".*"/theme="Monokai Extended Light"/' "${configFile}"
+  pattern=$(generateThemePattern "${batThemePattern}" "${config[bat_light_theme]}")
+  sed -i "${pattern}" "${batConfigFile}"
 }
 
 function batDark {
-  configFile=`${batCommand} --config-file`
-  sed -i 's/theme=".*"/theme="Dracula"/' "${configFile}"
+  pattern=$(generateThemePattern "${batThemePattern}" "${config[bat_dark_theme]}")
+  sed -i "${pattern}" "${batConfigFile}"
 }
 
-apps+=("${batCommand}")
+apps+=("bat")
 
 
 ################################################################################
@@ -113,6 +161,7 @@ apps+=("${batCommand}")
 deltaCommand="delta"
 
 deltaConfigFile="${HOME}/.gitconfig"
+deltaThemePattern='s/syntax-theme = .*$/syntax-theme = @new_theme@/'
 
 function deltaInit {
   # This is where we try to be as safe as possible so as not to mess up
@@ -143,14 +192,16 @@ function deltaInit {
 }
 
 function deltaLight {
-  sed -i 's/syntax-theme = .*$/syntax-theme = Monokai Extended Light/' "${deltaConfigFile}"
+  pattern=$(generateThemePattern "${deltaThemePattern}" "${config[delta_light_theme]}" )
+  sed -i "${pattern}" "${deltaConfigFile}"
 }
 
 function deltaDark {
-  sed -i 's/syntax-theme = .*$/syntax-theme = Dracula/' "${deltaConfigFile}"
+  pattern=$(generateThemePattern "${deltaThemePattern}" "${config[delta_dark_theme]}" )
+  sed -i "${pattern}" "${deltaConfigFile}"
 }
 
-apps+=("${deltaCommand}")
+apps+=("delta")
 
 
 ################################################################################
@@ -162,6 +213,7 @@ apps+=("${deltaCommand}")
 btopCommand="btop"
 btopConfigurationDirectory="${CONFIG_HOME}/btop"
 btopConfigurationFile="${btopConfigurationDirectory}/btop.conf"
+btopThemePattern='s/color_theme = ".*"/color_theme = "@new_theme@"/'
 
 function btopInit {
   # Ensure configuration exists.
@@ -172,14 +224,15 @@ function btopInit {
 }
 
 function btopLight {
-  sed -i 's/color_theme = ".*"/color_theme = "solarized_light"/' "${btopConfigurationFile}"
-  pkill -USR2 btop
+  pattern=$(generateThemePattern "${btopThemePattern}" "${config[btop_light_theme]}")
+  sed -i "${pattern}" "${btopConfigurationFile}"
+  pkill -USR2 ${btopCommand}
 }
 
 function btopDark {
-  sed -i 's/color_theme = ".*"/color_theme = "solarized_dark"/' "${btopConfigurationFile}"
-  pkill -USR2 btop
+  pattern=$(generateThemePattern "${btopThemePattern}" "${config[btop_dark_theme]}")
+  sed -i "${pattern}" "${btopConfigurationFile}"
+  pkill -USR2 ${btopCommand}
 }
 
-apps+=("${btopCommand}")
-
+apps+=("btop")
