@@ -127,9 +127,10 @@ fi
 
 function batInit {
   # Ensure configuration exists.
-  if [[ ! -f "\${batConfigFile}" ]]; then
-    mkdir -p "\${batConfigDirectory}"
-    echo -e "--theme=\"\"\n" > "\${batConfigFile}"
+  if [[ ! -f "${batConfigFile}" ]]; then
+    mkdir -p "${batConfigDirectory}"
+    echo -e "--theme=\"\"\n" > "${batConfigFile}"
+  fi
 }
 
 function batLight {
