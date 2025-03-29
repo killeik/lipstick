@@ -52,14 +52,15 @@ Lipstick will automatically find [supported apps](#supported-apps) on your syste
 Each application supported by Lipstick can have its default light and dark themes overridden by entries in the `~/.config/lipstick/lipstick.conf` file. The following example file is the equivalent of the Lipstick default themes:
 
 ```shell
-batcat_dark_theme=Dracula
-batcat_light_theme=Monokai Extended Light
 bat_dark_theme=Dracula
 bat_light_theme=Monokai Extended Light
+
 btop_dark_theme=dracula
 btop_light_theme=adapta
+
 delta_dark_theme=Dracula
 delta_light_theme=Monokai Extended Light
+
 helix_dark_theme=dracula
 helix_light_theme=onelight
 ```
