@@ -1,3 +1,4 @@
+This is fork of https://codeberg.org/small-tech/lipstick to add some changes I want to use.
 # 🐷 Lipstick on a Pig
 
 Lipstick makes command-line apps follow your light/dark mode settings.
@@ -7,24 +8,25 @@ Lipstick makes command-line apps follow your light/dark mode settings.
 ## System requirements
 
 - GNOME 42+
-- A colour scheme aware Terminal application like [Black Box](https://gitlab.gnome.org/raggesilver/blackbox#black-box)
+- A colour scheme aware Terminal application like [Black Box](https://gitlab.gnome.org/raggesilver/blackbox#black-box) or [Ghostty](https://ghostty.org/)
 - systemd
 
 ## Supported apps
 
 - [Bat](https://github.com/sharkdp/bat#readme)
+- [Btop](https://github.com/aristocratos/btop)
 - [Delta](https://github.com/dandavison/delta#readme)
 - [Helix](https://helix-editor.com)
 
 > __💡 Got an app you use that isn’t supported?__
 >
-> Add it to the [lipstick-apps](src/lipstick-apps) file and [submit a pull request](https://codeberg.org/small-tech/lipstick/pulls).
+> Add it to the [lipstick-apps](src/lipstick-apps) file and [submit a pull request](https://github.com/killeik/lipstick/pulls).
 
 ## Install
 
 Here are three ways you can install Lipstick on a Pig:
 
-😇 [Download and run this installation script.](https://codeberg.org/small-tech/lipstick/raw/branch/main/dist/install) 
+😇 [Download and run this installation script.](https://raw.githubusercontent.com/killeik/lipstick/refs/heads/main/dist/install) 
 
 🤓 Clone this repository and run the `./install` script.
 
@@ -33,13 +35,13 @@ Here are three ways you can install Lipstick on a Pig:
 __Using wget:__
 
 ```shell
-wget -qO- https://codeberg.org/small-tech/lipstick/raw/branch/main/dist/install | bash
+wget -qO- https://raw.githubusercontent.com/killeik/lipstick/refs/heads/main/dist/install | bash
 ```
 
 __Using curl:__
 
 ```shell
-curl -s https://codeberg.org/small-tech/lipstick/raw/branch/main/dist/install | bash
+curl -s https://raw.githubusercontent.com/killeik/lipstick/refs/heads/main/dist/install | bash
 ```
 
 Lipstick will automatically find [supported apps](#supported-apps) on your system and configure itself. You shouldn’t have to do anything else.
