@@ -169,12 +169,12 @@ function update {
 
   if command -v wget &> /dev/null; then
     # Update using wget.
-    wget -qO- https://codeberg.org/small-tech/lipstick/raw/branch/main/dist/install | bash 2>&1 1>/dev/null
+    wget -qO- https://raw.githubusercontent.com/killeik/lipstick/refs/heads/main/dist/install| bash 2>&1 1>/dev/null
   else
     # As wget does not exist, attempt to update using curl.
     if command -v curl &> /dev/null; then
       # Update using curl.
-      curl -s https://codeberg.org/small-tech/lipstick/raw/branch/main/dist/install | bash 2>&1 1>/dev/null
+      curl -s https://raw.githubusercontent.com/killeik/lipstick/refs/heads/main/dist/install | bash 2>&1 1>/dev/null
     else
       echo "Error: could not find wget or curl to download the update."
       echo "Please install one of these apps and re-run lipstick-update."
@@ -291,6 +291,11 @@ apps=()
 ################################################################################
 
 helixEditorCommand="hx"
+
+if command -v helix &>/dev/null; then
+  helixEditorCommand="helix"
+fi
+
 helixConfigurationDirectory="\${CONFIG_HOME}/helix"
 helixConfigurationFile="\${helixConfigurationDirectory}/config.toml"
 
@@ -323,10 +328,14 @@ apps+=("helixEditor")
 
 batCommand="bat"
 
+if command -v batcat &>/dev/null; then
+  batCommand="batcat"
+fi
+
 function batInit {
   # Ensure configuration exists.
-  configDirectory=\`bat --config-dir\`
-  configFile=\`bat --config-file\`
+  configDirectory=\`\${batCommand} --config-dir\`
+  configFile=\`\${batCommand} --config-file\`
 
   if [[ ! -f "\${configFile}" ]]; then
     mkdir -p "\${configDirectory}"
@@ -335,47 +344,17 @@ function batInit {
 }
 
 function batLight {
-  configFile=\`bat --config-file\`
+  configFile=\`\${batCommand} --config-file\`
   sed -i 's/theme=".*"/theme="Monokai Extended Light"/' "\${configFile}"
 }
 
 function batDark {
-  configFile=\`bat --config-file\`
+  configFile=\`\${batCommand} --config-file\`
   sed -i 's/theme=".*"/theme="Dracula"/' "\${configFile}"
 }
 
 apps+=("\${batCommand}")
 
-################################################################################
-#
-# Batcat (on Debian and Ubuntu, the bat binary is called batcat).
-#
-################################################################################
-
-batcatCommand="batcat"
-
-function batcatInit {
-  # Ensure configuration exists.
-  configDirectory=\`batcat --config-dir\`
-  configFile=\`batcat --config-file\`
-
-  if [[ ! -f "\${configFile}" ]]; then
-    mkdir -p "\${configDirectory}"
-    echo -e "--theme=\"\"\n" > "\${configFile}"
-  fi
-}
-
-function batcatLight {
-  configFile=\`batcat --config-file\`
-  sed -i 's/theme=".*"/theme="Monokai Extended Light"/' "\${configFile}"
-}
-
-function batcatDark {
-  configFile=\`batcat --config-file\`
-  sed -i 's/theme=".*"/theme="Dracula"/' "\${configFile}"
-}
-
-apps+=("\${batcatCommand}")
 
 ################################################################################
 #
@@ -431,6 +410,38 @@ function deltaDark {
 }
 
 apps+=("\${deltaCommand}")
+
+
+################################################################################
+#
+# btop process monitor
+#
+################################################################################
+
+btopCommand="btop"
+btopConfigurationDirectory="\${CONFIG_HOME}/btop"
+btopConfigurationFile="\${btopConfigurationDirectory}/btop.conf"
+
+function btopInit {
+  # Ensure configuration exists.
+  mkdir -p "\${btopConfigurationDirectory}"
+  if ! test -f "\${btopConfigurationFile}"; then
+    echo 'color_theme = "default"' > "\${btopConfigurationFile}"
+  fi
+}
+
+function btopLight {
+  sed -i 's/color_theme = ".*"/color_theme = "solarized_light"/' "\${btopConfigurationFile}"
+  pkill -USR2 btop
+}
+
+function btopDark {
+  sed -i 's/color_theme = ".*"/color_theme = "solarized_dark"/' "\${btopConfigurationFile}"
+  pkill -USR2 btop
+}
+
+apps+=("\${btopCommand}")
+
 EOF
 
 ######################################################################
