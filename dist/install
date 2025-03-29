@@ -316,7 +316,7 @@ fi
 
 function generateThemePattern {
   #\$1 - is theme pattern, \$2 - is new theme name
-  pattern=\$("echo \$1" |sed "s/@new_theme@/\$2" )
+  pattern=\$(echo "\$1" |sed "s/@new_theme@/\$2" )
   return "\$pattern"
 }
 
