@@ -45,7 +45,7 @@ config=(
 # <app_name>_light_theme=my_light_theme_name
 # <app_name>_dark_theme=my_dark_theme_name
 if [ -f "${LIPSTICK_CONF}" ]; then
-  while read line
+  while read -r line
   do
       if [[ "$line" == *"="* ]]; then
         var_name="${line%%=*}"
@@ -53,11 +53,12 @@ if [ -f "${LIPSTICK_CONF}" ]; then
         config["${var_name}"]="${var_value}"
       fi
   done < "${LIPSTICK_CONF}"
+fi
 
 function generateThemePattern {
   #$1 - is theme pattern, $2 - is new theme name
   pattern=$("echo $1" |sed "s/@new_theme@/$2" )
-  return $pattern
+  return "$pattern"
 }
 
 apps=()
@@ -118,8 +119,8 @@ batThemePattern='s/theme=".*"/theme="@new_theme@"/'
 # systemd unit won't be able to find `bat` command if it is in a toolbox container
 # like in Fedora Silverblue, so assume default config directory and file.
 if command -v ${batCommand} 2&> /dev/null; then
-  batConfigDirectory=`${batCommand} --config-dir`
-  batConfigFile=`${batCommand} --config-file`
+  batConfigDirectory=$( ${batCommand} --config-dir )
+  batConfigFile=$( ${batCommand} --config-file)
 else
   batConfigFile="${BAT_CONFIG_PATH:-${CONFIG_HOME}/bat/config}"
   batConfigDirectory="$(dirname "${batConfigFile}")"
