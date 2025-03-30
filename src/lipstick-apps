@@ -28,8 +28,6 @@ LIPSTICK_CONF="${CONFIG_HOME}/lipstick/lipstick.conf"
 # https://unix.stackexchange.com/questions/175648/use-config-file-for-my-shell-script
 typeset -A config
 config=(
-  [batcat_dark_theme]="Dracula"
-  [batcat_light_theme]="Monokai Extended Light"
   [bat_dark_theme]="Dracula"
   [bat_light_theme]="Monokai Extended Light"
   [btop_dark_theme]="dracula"
@@ -38,6 +36,8 @@ config=(
   [delta_light_theme]="Monokai Extended Light"
   [helix_dark_theme]="dracula"
   [helix_light_theme]="onelight"
+  [taskwarrior_dark_theme]="dark-256.theme"
+  [taskwarrior_light_theme]="light-256.theme"
 )
 
 # Lipstick theme override configuration file is optional
@@ -238,3 +238,35 @@ function btopDark {
 }
 
 apps+=("btop")
+
+################################################################################
+#
+# Taskwarrior time and task managment tool
+#
+################################################################################
+
+taskwarriorCommand='task'
+taskwarriorConfigFile="${HOME}/.taskrc"
+taskwarriorThemePattern='s/^ *include .*/include @new_theme@/'
+
+function taskwarriorInit {
+  # Ensure configuration exists.
+  if ! test -f "${taskwarriorConfigFile}"; then
+    echo 'include dark-256.theme' > "${taskwarriorConfigFile}"
+  fi
+}
+
+function taskwarriorLight {
+  pattern=$(generateThemePattern "${taskwarriorThemePattern}" "${config[taskwarrior_light_theme]}")
+  echo "$pattern" 
+  sed -i "${pattern}" "${taskwarriorConfigFile}" 
+}
+
+function taskwarriorDark {
+  pattern=$(generateThemePattern "${taskwarriorThemePattern}" "${config[taskwarrior_dark_theme]}")
+  echo "$pattern"
+  sed -i "${pattern}" "${taskwarriorConfigFile}"
+}
+
+apps+=("taskwarrior")
+

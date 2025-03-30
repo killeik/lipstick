@@ -17,6 +17,7 @@ Lipstick makes command-line apps follow your light/dark mode settings.
 - [Btop](https://github.com/aristocratos/btop)
 - [Delta](https://github.com/dandavison/delta#readme)
 - [Helix](https://helix-editor.com)
+- [Taskwarior](https://taskwarrior.org/)
 
 > __💡 Got an app you use that isn’t supported?__
 >
@@ -63,6 +64,9 @@ delta_light_theme=Monokai Extended Light
 
 helix_dark_theme=dracula
 helix_light_theme=onelight
+
+taskwarrior_dark_theme=dark-256.theme
+taskwarrior_light_theme=light-256.theme
 ```
 
 ### Refreshing running apps
