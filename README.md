@@ -1,4 +1,3 @@
-This is fork of https://codeberg.org/small-tech/lipstick to add some changes I want to use.
 # 🐷 Lipstick on a Pig
 
 Lipstick makes command-line apps follow your light/dark mode settings.
@@ -81,12 +80,7 @@ Please either install Lipstick from the host system or from a [toolbox](https://
 
 (Distrobox currently doesn’t work with systemd `--user` services in either [initful](https://github.com/89luca89/distrobox/issues/380) or [initless](https://github.com/89luca89/distrobox/issues/379#issuecomment-1217864773) containers and the installer will fail under a Distrobox container.)
 
-## Like this? Fund us!
-
-[Small Technology Foundation](https://small-tech.org) is a tiny, independent not-for-profit.
-
-We exist in part thanks to patronage by people like you. If you share [our vision](https://small-tech.org/about/#small-technology) and want to support our work, please [become a patron or donate to us](https://small-tech.org/fund-us) today and help us continue to exist.
-
-## Copyright
-
-&copy; 2022-present [Aral Balkan](https://ar.al), [Small Technology Foundation](https://small-tech.org).
+### Thanks
+This repository is a fork of the [original lipstick repository on codeberg](https://codeberg.org/small-tech/lipstick).
+I am grateful to them for the great idea and easy extensibility of the scripts. However, the list of supported applications was too small, and the author has not made changes for three years at the current moment (2025). 
+If you want to support original author, you can [become a patron or donate to them](https://small-tech.org/fund-us).
