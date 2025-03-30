@@ -45,14 +45,13 @@ config=(
 # <app_name>_light_theme=my_light_theme_name
 # <app_name>_dark_theme=my_dark_theme_name
 if [ -f "${LIPSTICK_CONF}" ]; then
-  while read -r line
-  do
-      if [[ "$line" == *"="* ]]; then
-        var_name="${line%%=*}"
-        var_value="${line#*=}"
-        config["${var_name}"]="${var_value}"
-      fi
-  done < "${LIPSTICK_CONF}"
+  while read -r line; do
+    if [[ "$line" == *"="* ]]; then
+      var_name="${line%%=*}"
+      var_value="${line#*=}"
+      config["${var_name}"]="${var_value}"
+    fi
+  done <"${LIPSTICK_CONF}"
 fi
 
 function generateThemePattern {
@@ -62,7 +61,6 @@ function generateThemePattern {
 }
 
 apps=()
-
 
 ################################################################################
 #
@@ -84,24 +82,23 @@ function helixInit {
   # Ensure configuration exists.
   mkdir -p "${helixConfigurationDirectory}"
   if ! test -f "${helixConfigurationFile}"; then
-    echo 'theme = "default"' > "${helixConfigurationFile}"
+    echo 'theme = "default"' >"${helixConfigurationFile}"
   fi
 }
 
 function helixLight {
-  pattern=$(generateThemePattern "$helixThemePattern" "${config[helix_light_theme]}" )
+  pattern=$(generateThemePattern "$helixThemePattern" "${config[helix_light_theme]}")
   sed -i "${pattern}" "${helixConfigurationFile}"
   pkill -USR1 ${helixCommand}
 }
 
 function helixDark {
-  pattern=$(generateThemePattern "$helixThemePattern" "${config[helix_dark_theme]}" )
+  pattern=$(generateThemePattern "$helixThemePattern" "${config[helix_dark_theme]}")
   sed -i "${pattern}" "${helixConfigurationFile}"
   pkill -USR1 ${helixCommand}
 }
 
 apps+=("helix")
-
 
 ################################################################################
 #
@@ -118,9 +115,9 @@ batThemePattern='s/theme=".*"/theme="@new_theme@"/'
 
 # systemd unit won't be able to find `bat` command if it is in a toolbox container
 # like in Fedora Silverblue, so assume default config directory and file.
-if command -v ${batCommand} 2&> /dev/null; then
-  batConfigDirectory=$( ${batCommand} --config-dir )
-  batConfigFile=$( ${batCommand} --config-file)
+if command -v ${batCommand} 2 &>/dev/null; then
+  batConfigDirectory=$(${batCommand} --config-dir)
+  batConfigFile=$(${batCommand} --config-file)
 else
   batConfigFile="${BAT_CONFIG_PATH:-${CONFIG_HOME}/bat/config}"
   batConfigDirectory="$(dirname "${batConfigFile}")"
@@ -130,7 +127,7 @@ function batInit {
   # Ensure configuration exists.
   if [[ ! -f "${batConfigFile}" ]]; then
     mkdir -p "${batConfigDirectory}"
-    echo -e "--theme=\"\"\n" > "${batConfigFile}"
+    echo -e "--theme=\"\"\n" >"${batConfigFile}"
   fi
 }
 
@@ -145,7 +142,6 @@ function batDark {
 }
 
 apps+=("bat")
-
 
 ################################################################################
 #
@@ -174,10 +170,10 @@ function deltaInit {
   # If a .gitconfig file doesn’t exist, create one and add a
   # Delta section with a default theme.
   if [[ ! -f "${deltaConfigFile}" ]]; then
-    echo -e "${themeDefinition}" > "${deltaConfigFile}"
+    echo -e "${themeDefinition}" >"${deltaConfigFile}"
     exit
   fi
-  
+
   # Git config exists, check if there is already a syntax-theme setting.
   if grep -q "\[delta\]" ~/.gitconfig; then
     if grep -q "syntax-theme =" ~/.gitconfig; then
@@ -188,23 +184,22 @@ function deltaInit {
       sed -i "s/\[delta\]/${themeDefinition}/" "${deltaConfigFile}"
     fi
   else
-      # [delta] section does not exist. Add it.
-      echo -e "\n${themeDefinition}\n" >> "${deltaConfigFile}"
+    # [delta] section does not exist. Add it.
+    echo -e "\n${themeDefinition}\n" >>"${deltaConfigFile}"
   fi
 }
 
 function deltaLight {
-  pattern=$(generateThemePattern "${deltaThemePattern}" "${config[delta_light_theme]}" )
+  pattern=$(generateThemePattern "${deltaThemePattern}" "${config[delta_light_theme]}")
   sed -i "${pattern}" "${deltaConfigFile}"
 }
 
 function deltaDark {
-  pattern=$(generateThemePattern "${deltaThemePattern}" "${config[delta_dark_theme]}" )
+  pattern=$(generateThemePattern "${deltaThemePattern}" "${config[delta_dark_theme]}")
   sed -i "${pattern}" "${deltaConfigFile}"
 }
 
 apps+=("delta")
-
 
 ################################################################################
 #
@@ -221,7 +216,7 @@ function btopInit {
   # Ensure configuration exists.
   mkdir -p "${btopConfigurationDirectory}"
   if ! test -f "${btopConfigurationFile}"; then
-    echo 'color_theme = "default"' > "${btopConfigurationFile}"
+    echo 'color_theme = "default"' >"${btopConfigurationFile}"
   fi
 }
 
@@ -252,14 +247,14 @@ taskwarriorThemePattern='s/^ *include .*/include @new_theme@/'
 function taskwarriorInit {
   # Ensure configuration exists.
   if ! test -f "${taskwarriorConfigFile}"; then
-    echo 'include dark-256.theme' > "${taskwarriorConfigFile}"
+    echo 'include dark-256.theme' >"${taskwarriorConfigFile}"
   fi
 }
 
 function taskwarriorLight {
   pattern=$(generateThemePattern "${taskwarriorThemePattern}" "${config[taskwarrior_light_theme]}")
-  echo "$pattern" 
-  sed -i "${pattern}" "${taskwarriorConfigFile}" 
+  echo "$pattern"
+  sed -i "${pattern}" "${taskwarriorConfigFile}"
 }
 
 function taskwarriorDark {
@@ -269,4 +264,3 @@ function taskwarriorDark {
 }
 
 apps+=("taskwarrior")
-

@@ -38,7 +38,7 @@ read -rd '' lipstick <<-EOF
 # For list of commands, run lipstick help.
 #
 # For source code, documentation, etc., please see:
-# https://codeberg.org/small-tech/lipstick
+# https://github.com/killeik/lipstick/
 #
 # Copyright © 2022-present Aral Balkan, Small Technology Foundation
 # License: AGPL version 3.0.
@@ -47,7 +47,7 @@ read -rd '' lipstick <<-EOF
 
 VERSION="1.0"
 
-# Binary and configuration path usage adheres to 
+# Binary and configuration path usage adheres to
 # freedesktop.org XDG Base Directory Specification
 # https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
 BINARY_HOME="\${HOME}/.local/bin"
@@ -67,10 +67,9 @@ function configure {
   # Find and initialise support for all supported apps installed on this system.
   installedApps=()
 
-  for app in "\${apps[@]}";
-  do
+  for app in "\${apps[@]}"; do
     appCommand="\${app}Command"
-    if command -v "\${!appCommand}" &> /dev/null; then
+    if command -v "\${!appCommand}" &>/dev/null; then
       # App is installed.
       echo "  • Found app: \${app} (\${!appCommand}), adding support for it"
       installedApps+=("\${app}")
@@ -79,22 +78,20 @@ function configure {
   done
 
   # Save the list of installed apps.
-  echo -e "#!/usr/bin/env bash\n\ninstalledApps=(\${installedApps[*]})" > "\${LIPSTICK_DATA_HOME}/installed-apps"
+  echo -e "#!/usr/bin/env bash\n\ninstalledApps=(\${installedApps[*]})" >"\${LIPSTICK_DATA_HOME}/installed-apps"
 }
-
 
 function monitor {
   # When system colour scheme changes, run sync script.
-  gsettings monitor org.gnome.desktop.interface color-scheme \
-    | xargs -L1 "\${BINARY_HOME}/lipstick"
+  gsettings monitor org.gnome.desktop.interface color-scheme |
+    xargs -L1 "\${BINARY_HOME}/lipstick"
 }
-
 
 function sync {
   # Run all colour scheme updates for configured apps based on
   # the passed colour scheme (\$1). Possible values are “default” for light and
   # anything else for dark.
-  
+
   # Import list of all apps (apps), including their configuration functions,
   # as well as a list of the currently installed apps (installedApps) on this system.
   # (The latter is compiled by the lipstick-configure script run by the installer.)
@@ -116,27 +113,23 @@ function sync {
   echo "🐷 Switching to \${colourScheme} Mode."
 
   # Configure apps for the current colour scheme.
-  for app in "\${installedApps[@]}";
-  do
+  for app in "\${installedApps[@]}"; do
     appCommand="\${app}Command"
     echo "💄 Setting \${colourScheme,,} colour scheme for \${app} (\${!appCommand})"
     "\${app}\${colourScheme}"
   done
 }
 
-
 function showSmallHeader {
   echo "🐷 Lipstick on a Pig"
   echo ""
 }
-
 
 function status {
   # Show systemd service status.
   showSmallHeader
   systemctl status --user --no-pager lipstick
 }
-
 
 function logs {
   # Show systemd service logs.
@@ -148,33 +141,31 @@ function enableService {
   # Enable the Lipstick monitor to start on boot, start it up immediately,
   # and also run the sync command right away with the current colour scheme.
   sync "\$(gsettings get org.gnome.desktop.interface color-scheme)"
-  systemctl --user enable lipstick.service > /dev/null 2>&1
-  systemctl --user start lipstick.service > /dev/null 2>&1
+  systemctl --user enable lipstick.service >/dev/null 2>&1
+  systemctl --user start lipstick.service >/dev/null 2>&1
 }
-
 
 function disableService {
   # Stop the Lipstick colour scheme change monitor service immediately and
   # disable it from starting at boot.
-  systemctl --user stop lipstick.service > /dev/null 2>&1
-  systemctl --user disable lipstick.service > /dev/null 2>&1
+  systemctl --user stop lipstick.service >/dev/null 2>&1
+  systemctl --user disable lipstick.service >/dev/null 2>&1
 }
-
 
 function update {
   # Update Lipstick on a Pig.
   echo -e "🐷 Updating Lipstick on a Pig…"
 
-  uninstall > /dev/null 2>&1
+  uninstall >/dev/null 2>&1
 
-  if command -v wget &> /dev/null; then
+  if command -v wget &>/dev/null; then
     # Update using wget.
-    wget -qO- https://raw.githubusercontent.com/killeik/lipstick/refs/heads/main/dist/install| bash > /dev/null 2>&1
+    wget -qO- https://raw.githubusercontent.com/killeik/lipstick/refs/heads/main/dist/install | bash >/dev/null 2>&1
   else
     # As wget does not exist, attempt to update using curl.
-    if command -v curl &> /dev/null; then
+    if command -v curl &>/dev/null; then
       # Update using curl.
-      curl -s https://raw.githubusercontent.com/killeik/lipstick/refs/heads/main/dist/install | bash > /dev/null 2>&1
+      curl -s https://raw.githubusercontent.com/killeik/lipstick/refs/heads/main/dist/install | bash >/dev/null 2>&1
     else
       echo "Error: could not find wget or curl to download the update."
       echo "Please install one of these apps and re-run lipstick-update."
@@ -185,20 +176,18 @@ function update {
   echo "💄 Done."
 }
 
-
 function uninstall {
   # Uninstall Lipstick on a Pig.
   echo "🐷 Uninstalling Lipstick on a Pig…"
 
-  disableService > /dev/null 2>&1
+  disableService >/dev/null 2>&1
 
   rm -rf "\${LIPSTICK_DATA_HOME}"
   rm "\${CONFIG_HOME}/systemd/user/lipstick.service"
   rm "\${BINARY_HOME}/lipstick"
-  
+
   echo "💄 Done."
 }
-
 
 function showHelp {
   echo "🐷 Lipstick on a Pig version \${VERSION}"
@@ -237,16 +226,16 @@ function main {
   # Parse command.
 
   case \$1 in
-    configure     ) configure      ;;
-    monitor       ) monitor        ;;  # private; only used by systemd service.
-    sync          ) sync "\${2}"    ;;  # private; only used by systemd service.
-    status        ) status         ;;
-    logs          ) logs           ;;
-    enable        ) enableService  ;;
-    disable       ) disableService ;;
-    update        ) update         ;;
-    uninstall     ) uninstall      ;;
-    *             ) showHelp       ;;
+  configure) configure ;;
+  monitor) monitor ;;  # private; only used by systemd service.
+  sync) sync "\${2}" ;; # private; only used by systemd service.
+  status) status ;;
+  logs) logs ;;
+  enable) enableService ;;
+  disable) disableService ;;
+  update) update ;;
+  uninstall) uninstall ;;
+  *) showHelp ;;
   esac
 }
 
@@ -304,14 +293,13 @@ config=(
 # <app_name>_light_theme=my_light_theme_name
 # <app_name>_dark_theme=my_dark_theme_name
 if [ -f "\${LIPSTICK_CONF}" ]; then
-  while read -r line
-  do
-      if [[ "\$line" == *"="* ]]; then
-        var_name="\${line%%=*}"
-        var_value="\${line#*=}"
-        config["\${var_name}"]="\${var_value}"
-      fi
-  done < "\${LIPSTICK_CONF}"
+  while read -r line; do
+    if [[ "\$line" == *"="* ]]; then
+      var_name="\${line%%=*}"
+      var_value="\${line#*=}"
+      config["\${var_name}"]="\${var_value}"
+    fi
+  done <"\${LIPSTICK_CONF}"
 fi
 
 function generateThemePattern {
@@ -321,7 +309,6 @@ function generateThemePattern {
 }
 
 apps=()
-
 
 ################################################################################
 #
@@ -343,24 +330,23 @@ function helixInit {
   # Ensure configuration exists.
   mkdir -p "\${helixConfigurationDirectory}"
   if ! test -f "\${helixConfigurationFile}"; then
-    echo 'theme = "default"' > "\${helixConfigurationFile}"
+    echo 'theme = "default"' >"\${helixConfigurationFile}"
   fi
 }
 
 function helixLight {
-  pattern=\$(generateThemePattern "\$helixThemePattern" "\${config[helix_light_theme]}" )
+  pattern=\$(generateThemePattern "\$helixThemePattern" "\${config[helix_light_theme]}")
   sed -i "\${pattern}" "\${helixConfigurationFile}"
   pkill -USR1 \${helixCommand}
 }
 
 function helixDark {
-  pattern=\$(generateThemePattern "\$helixThemePattern" "\${config[helix_dark_theme]}" )
+  pattern=\$(generateThemePattern "\$helixThemePattern" "\${config[helix_dark_theme]}")
   sed -i "\${pattern}" "\${helixConfigurationFile}"
   pkill -USR1 \${helixCommand}
 }
 
 apps+=("helix")
-
 
 ################################################################################
 #
@@ -377,9 +363,9 @@ batThemePattern='s/theme=".*"/theme="@new_theme@"/'
 
 # systemd unit won't be able to find \`bat\` command if it is in a toolbox container
 # like in Fedora Silverblue, so assume default config directory and file.
-if command -v \${batCommand} 2&> /dev/null; then
-  batConfigDirectory=\$( \${batCommand} --config-dir )
-  batConfigFile=\$( \${batCommand} --config-file)
+if command -v \${batCommand} 2 &>/dev/null; then
+  batConfigDirectory=\$(\${batCommand} --config-dir)
+  batConfigFile=\$(\${batCommand} --config-file)
 else
   batConfigFile="\${BAT_CONFIG_PATH:-\${CONFIG_HOME}/bat/config}"
   batConfigDirectory="\$(dirname "\${batConfigFile}")"
@@ -389,7 +375,7 @@ function batInit {
   # Ensure configuration exists.
   if [[ ! -f "\${batConfigFile}" ]]; then
     mkdir -p "\${batConfigDirectory}"
-    echo -e "--theme=\"\"\n" > "\${batConfigFile}"
+    echo -e "--theme=\"\"\n" >"\${batConfigFile}"
   fi
 }
 
@@ -404,7 +390,6 @@ function batDark {
 }
 
 apps+=("bat")
-
 
 ################################################################################
 #
@@ -433,10 +418,10 @@ function deltaInit {
   # If a .gitconfig file doesn’t exist, create one and add a
   # Delta section with a default theme.
   if [[ ! -f "\${deltaConfigFile}" ]]; then
-    echo -e "\${themeDefinition}" > "\${deltaConfigFile}"
+    echo -e "\${themeDefinition}" >"\${deltaConfigFile}"
     exit
   fi
-  
+
   # Git config exists, check if there is already a syntax-theme setting.
   if grep -q "\[delta\]" ~/.gitconfig; then
     if grep -q "syntax-theme =" ~/.gitconfig; then
@@ -447,23 +432,22 @@ function deltaInit {
       sed -i "s/\[delta\]/\${themeDefinition}/" "\${deltaConfigFile}"
     fi
   else
-      # [delta] section does not exist. Add it.
-      echo -e "\n\${themeDefinition}\n" >> "\${deltaConfigFile}"
+    # [delta] section does not exist. Add it.
+    echo -e "\n\${themeDefinition}\n" >>"\${deltaConfigFile}"
   fi
 }
 
 function deltaLight {
-  pattern=\$(generateThemePattern "\${deltaThemePattern}" "\${config[delta_light_theme]}" )
+  pattern=\$(generateThemePattern "\${deltaThemePattern}" "\${config[delta_light_theme]}")
   sed -i "\${pattern}" "\${deltaConfigFile}"
 }
 
 function deltaDark {
-  pattern=\$(generateThemePattern "\${deltaThemePattern}" "\${config[delta_dark_theme]}" )
+  pattern=\$(generateThemePattern "\${deltaThemePattern}" "\${config[delta_dark_theme]}")
   sed -i "\${pattern}" "\${deltaConfigFile}"
 }
 
 apps+=("delta")
-
 
 ################################################################################
 #
@@ -480,7 +464,7 @@ function btopInit {
   # Ensure configuration exists.
   mkdir -p "\${btopConfigurationDirectory}"
   if ! test -f "\${btopConfigurationFile}"; then
-    echo 'color_theme = "default"' > "\${btopConfigurationFile}"
+    echo 'color_theme = "default"' >"\${btopConfigurationFile}"
   fi
 }
 
@@ -511,14 +495,14 @@ taskwarriorThemePattern='s/^ *include .*/include @new_theme@/'
 function taskwarriorInit {
   # Ensure configuration exists.
   if ! test -f "\${taskwarriorConfigFile}"; then
-    echo 'include dark-256.theme' > "\${taskwarriorConfigFile}"
+    echo 'include dark-256.theme' >"\${taskwarriorConfigFile}"
   fi
 }
 
 function taskwarriorLight {
   pattern=\$(generateThemePattern "\${taskwarriorThemePattern}" "\${config[taskwarrior_light_theme]}")
-  echo "\$pattern" 
-  sed -i "\${pattern}" "\${taskwarriorConfigFile}" 
+  echo "\$pattern"
+  sed -i "\${pattern}" "\${taskwarriorConfigFile}"
 }
 
 function taskwarriorDark {
@@ -528,7 +512,6 @@ function taskwarriorDark {
 }
 
 apps+=("taskwarrior")
-
 EOF
 
 ######################################################################
